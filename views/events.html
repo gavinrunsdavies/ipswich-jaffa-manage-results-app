@@ -1,0 +1,275 @@
+<div class="center-panel">
+    <h2>This is the Events editor</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p>View events, add new, merge or delete an existing event.</p>
+            <p>Due to current restrictions you can not delete an event that has results
+                associated with it (the button is shown as opaque and decatived). This will be a
+                feature in future releases. You may only delete an event that has 0 results on
+                the '# of Results' column.</p>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Add new events</div>
+        <div class="panel-body">
+            <form class="form-horizontal" ng-submit="saveEvent()">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">Name</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="name" ng-model="newEvent.name"
+                            ng-required="true" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="distance">Distance</label>
+                    <div class="col-sm-10">
+                        <select id="month" class="form-control" ng-model="newEvent.distanceId"
+                            ng-options="d.id as d.text for d in distances" ng-required="true"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="website">Website</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="website" ng-model="newEvent.website"
+                            ng-required="false" type="text">
+                    </div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <input class="btn btn-success" type="submit" value="Add"/>
+					    <input class="btn btn-default" type="reset" value="Clear">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Edit, or delete events. Currently the distance is not
+            editable as these need further changes to recalculate past results.</div>
+	    <div class="panel-body text-right">
+			Search:
+            <input ng-model="query">
+        </div>
+
+        <div class="panel-body">           
+            <!-- Events list -->
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Distance</th>
+                        <th>Website Url</th>
+                        <th># of Results</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Distance</th>
+                        <th>Website Url</th>
+                        <th># of Results</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr current-page="currentPage"
+                        dir-paginate="event in events | filter:query | itemsPerPage: pageSize">
+                        <td>
+                            <span e-name="name" e-required editable-text="event.name"
+                                onbeforesave="updateEventName($data, event.id)">
+                                {{ event.name || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ showDistance(event) }}
+                        </td>
+                        <td>
+                            <a e-name="website" editable-url="event.website" href="#" onbeforesave="updateEventWebsite($data, event.id)">{{ event.website || 'None' }}</a>
+                        </td>
+                        <td>
+                            {{ event.count }}
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeEvent(event)"
+                                    ng-disabled="event.count > 0">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <dir-pagination-controls auto-hide="false" boundary-links="true"
+                    template-url="templates/dirPagination.tpl.html"></dir-pagination-controls>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Merge results from two events in to one</div>
+        <div class="panel-body">
+            <form class="form-inline" ng-submit="mergeEvents()">
+                <div class="form-group">
+                    <label for="fromEvent">From Event</label>
+                    <select class="form-control" id="fromEvent" name="singleSelect" ng-model="fromEvent">
+                        <option ng-repeat="option in events" value="{{option.id}}">{{option.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="toEvent">To Event</label>
+                    <select class="form-control" id="fromEvent" name="singleSelect" ng-model="toEvent">
+                        <option ng-repeat="option in events" value="{{option.id}}">{{option.name}}</option>
+                    </select>
+                </div>
+                <input class="btn btn-success" type="submit" value="Merge"/>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Manage event course</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="courseEvent">From Event</label>
+                <select id="courseEvent" class="form-control" name="singleSelect" ng-change="updateCourseList()"
+                    ng-model="courseEvent">
+                    <option ng-repeat="option in events" value="{{option.id}}">{{option.name}}</option>
+                </select>
+                <button class="btn btn-default" ng-click="showAddCourseForm = true">Add course</button>
+            </div>
+            <div ng-show="showAddCourseForm">
+                <form class="form-horizontal" ng-submit="saveCourse()">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="courseNumber">Course Number</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="courseNumber" ng-model="newCourse.courseNumber"
+                                ng-required="true" type="text">
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-2 control-label" for="area">Area</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="area" ng-model="newCourse.area"
+                                ng-required="true" type="text">
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-sm-2 control-label" for="county">County</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="county" ng-model="newCourse.county"
+                                ng-required="true" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="courseType">Type</label>
+                        <div class="col-sm-10">
+                            <select id="month" class="form-control" ng-model="newCourse.typeId"
+                                ng-options="c.id as c.description for c in courseTypes" ng-required="true"></select>
+                        </div>
+                    </div>
+					<div class="form-group">
+                    <label class="col-sm-2 control-label" for="registeredDistance">Registered Distance?</label>
+                    <div class="col-sm-10">
+                        <div class="checkbox">
+                            <input id="registeredDistance" ng-model="newCourse.registeredDistance"
+                                type="checkbox">
+                        </div>
+                    </div>
+                </div>
+				   <div class="form-group">
+                    <label class="col-sm-2 control-label" for="certifiedAccurate">Certified Accurate?</label>
+                    <div class="col-sm-10">
+                        <div class="checkbox">
+                            <input id="certifiedAccurate" ng-model="newCourse.certifiedAccurate"
+                                type="checkbox">
+                        </div>
+                    </div>
+                </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>                      
+                        <div class="col-sm-10">
+                            <input class="btn btn-success" type="submit" value="Add"/>
+							 <input class="btn btn-default" type="reset" value="Clear">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Course Number</th>
+                        <th>County</th>
+                        <th>Area</th>
+                        <th>Registered Distance</th>
+                        <th>Certified Accurate</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="course in courses">
+                        <td>                            
+                                {{ course.name }}                            
+                        </td>
+                        <td>
+                            <span e-name="courseNumber" e-required editable-text="course.courseNumber">
+                                {{ course.courseNumber || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="county" e-required editable-text="course.county">
+                                {{ course.county || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="area" e-required editable-text="course.area">
+                                {{ course.area || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a e-ng-options="s.value as s.text for s in booleanStatuses"
+                                editable-radiolist="course.registeredDistance" href="#"
+                                onbeforesave="updateCourseRegisteredDistance($data, course.id)">
+                                {{ showBoolean(course.registeredDistance) }}
+                            </a>
+                        </td>
+                        <td>
+                            <a e-ng-options="s.value as s.text for s in booleanStatuses"
+                                editable-radiolist="course.certifiedAccurate" href="#"
+                                onbeforesave="updateCourseCertifiedAccurate($data, course.id)">
+                                {{ showBoolean(course.certifiedAccurate) }}
+                            </a>
+                        </td>
+                        <td>                    
+							  <a e-name="typeId" e-ng-options="d.id as d.description for d in courseTypes"
+                                editable-select="course.typeId" href="#">
+                                {{ showCourseType(course) }}
+                            </span>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeCourse(course)">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script id="modalConfirmDelete.html" type="text/ng-template">
+        <div class="modal-header">
+            <h3 class="modal-title">Warning!</h3>
+        </div>
+        <div class="modal-body">
+            Event contains associated results. Do you want to delete the event and all
+            results?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="delete()" type="button">Yes</button>
+            <button class="btn btn-warning" ng-click="cancel()" type="button">Cancel</button>
+        </div>
+    </script>
+</div>

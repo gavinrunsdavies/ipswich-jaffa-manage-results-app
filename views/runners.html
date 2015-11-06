@@ -1,0 +1,144 @@
+<div class="center-panel">
+    <h2>This is the Runner editor</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading">View members, add new or delete an existing member.</div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Add new members</div>
+        <div class="panel-body">
+            <form class="form-horizontal" ng-submit="saveRunner()">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">Name</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="name" ng-model="newRunner.name"
+                            ng-required="true" placeholder="Name" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">Gender</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input id="genderMale" name="gender" ng-model="newRunner.sexId"
+                                ng-required="true" type="radio" value="2">
+                            Male
+                        </label>
+                        <label class="radio-inline">
+                            <input id="genderFemale" name="gender" ng-model="newRunner.sexId"
+                                ng-required="true" type="radio" value="3">
+                            Female
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="dob">Date of birth</label>
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input class="form-control" close-text="Close" is-open="calendarStatus.opened"
+                                is-open="calendarStatus.opened" ng-model="newRunner.dateOfBirth"
+                                ng-required="true" type="text" uib-datepicker-popup="dd-MMMM-yyyy"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="openCalendar($event)" type="button">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="current_member">Current Member?</label>
+                    <div class="col-sm-10">
+                        <div class="checkbox">
+                            <input id="current_member" ng-model="newRunner.isCurrentMember"
+                                type="checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+					<label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <input class="btn btn-success" type="submit" value="Add">
+					    <input class="btn btn-default" type="reset" value="Clear">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Edit, or delete events. Currently the date or birth
+            and gender are not editable as these need further changes to recalculate past
+            results.</div>
+			<div class="panel-heading text-right">
+			Search with results:
+            <input ng-model="query">
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Date of birth</th>
+                        <th>Current member</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Date of birth</th>
+                        <th>Current member</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr current-page="currentPage"
+                        dir-paginate="runner in runners | filter:query | itemsPerPage: pageSize">
+                        <td>
+                            <span e-name="name" e-required editable-text="runner.name"
+                                onbeforesave="updateRunnerName($data, runner.id)">
+                                {{ runner.name || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ runner.sex }}
+                        </td>
+                        <td>
+                            {{ showDate(runner.dateOfBirth) }}
+                        </td>
+                        <td>
+                            <a e-ng-options="s.value as s.text for s in currentMemberStatuses"
+                                editable-radiolist="runner.isCurrentMember" href="#"
+                                onbeforesave="updateMemberStatus($data, runner.id)">
+                                {{ showCurrentMemberStatus(runner.isCurrentMember) }}
+                            </a>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeRunner(runner)">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <dir-pagination-controls auto-hide="false" boundary-links="true"
+                    template-url="templates/dirPagination.tpl.html"></dir-pagination-controls>
+            </div>
+
+        </div>
+    </div>
+    <script id="modalConfirmDelete.html" type="text/ng-template">
+        <div class="modal-header">
+            <h3 class="modal-title">Warning!</h3>
+        </div>
+        <div class="modal-body">
+            Member has associated results. Do you want to delete the member and all of their
+            results?
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="delete()" type="button">Yes</button>
+            <button class="btn btn-warning" ng-click="cancel()" type="button">Cancel</button>
+        </div>
+    </script>
+</div>

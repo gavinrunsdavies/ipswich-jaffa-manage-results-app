@@ -1,0 +1,173 @@
+<!doctype html>
+<html class="no-js" ng-app="ipswichJaffaResultsManagementApp">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	 <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"> -->
+    
+	<link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
+	
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+	 <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">         
+    <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.min.css" />
+    <!-- endbuild -->
+	<style>
+	
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+.spinner {
+  width: 100px;
+  height: 100px;
+
+  position: absolute;
+  top: calc(50% - 70px);
+  left: calc(50% - 50px);
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #9c9;
+  border: solid 3px #fff;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  
+  -webkit-animation: bounce 2.0s infinite ease-in-out;
+  animation: bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+@-webkit-keyframes bounce {
+  0%, 100% { -webkit-transform: scale(0.0) }
+  50% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+
+.overlay {
+  opacity: .75;
+  background-color: #000;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  position: absolute;
+  z-index: 5;
+  margin: -20px -20px;
+  border-radius: 3px;
+}
+
+.please-wait {
+  text-align: center;
+  position: absolute;
+  top: calc(50% + 45px);
+  left: calc(50% - 45px);
+  color: #fff;
+  z-index: 10;
+}
+
+</style>
+  </head>
+  <body ng-controller="BodyController">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <nav class="navbar navbar-default navbar-fixed-top" >
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Ipswich Jaffa Results Management</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#/">Home</a></li>
+             <li ng-hide="hideMenu"><a ng-href="#/events">Events</a></li>
+			 <li ng-hide="hideMenu"><a ng-href="#/runners">Runners</a></li>
+			 <li ng-hide="hideMenu"><a ng-href="#/results">Results</a></li>              
+			 <li ng-hide="hideMenu"><a ng-href="#/rotm">Runner of the Month</a></li>   
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+		    <li><a>Hello {{name}}</a></li>      
+			<li><a ng-href="#/login">Logout</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+      <div class="container">   
+		<div ng-if="stateIsLoading" class="alert alert-info">
+		  <strong>Loading.</strong>
+		  Please wait...
+		</div>		
+		<div ng-if="!stateIsLoading" ng-view></div>        
+      </div>
+
+    <div class="footer">
+      <div class="container">
+        <p><a href="http://www.ipswichjaffa.org.uk" target="_blank">www.ipswichjaffa.org.uk</a> with <span class="glyphicon glyphicon-heart"></span> from <a href="mailto:gavinrunsdavies@gmail.com">Gavin Davies</a></p>
+      </div>
+    </div>
+	
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+   
+    <script src="bower_components/bootstrap-bower/ui-bootstrap-tpls.min.js"></script>
+	<script src="bower_components/angular-xeditable/dist/js/xeditable.min.js"></script>	
+	<script src="bower_components/angular-busy/dist/angular-busy.min.js"></script>	
+	<!-- https://github.com/cgross/angular-busy -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+		<script src="scripts/controllers/body.js"></script>
+		<script src="scripts/controllers/login.js"></script>
+        <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/events.js"></script>
+        <script src="scripts/controllers/results.js"></script>
+        <script src="scripts/controllers/runners.js"></script>
+		<script src="scripts/controllers/runner-of-the-month.js"></script>
+		<script src="scripts/services/authentication.js"></script>
+        <script src="scripts/services/dataservice.js"></script>
+		<script src="scripts/services/utilityservice.js"></script>
+		<script src="scripts/dirPagination.js"></script> <!-- TODO to bower -->
+        <!-- endbuild -->
+</body>
+</html>

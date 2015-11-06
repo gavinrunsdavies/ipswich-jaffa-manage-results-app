@@ -1,0 +1,252 @@
+<div class="center-panel">
+    <h2>This is the Result editor</h2>  
+    <p class="lead">View results, add new or delete an existing entries.</p>
+    <div class="panel panel-default">
+        <div class="panel-heading"
+            ng-click="collapseAddResultsForm = !collapseAddResultsForm"><a role="button">Add new results</a></div>
+        <div class="panel-body" uib-collapse="collapseAddResultsForm">
+            <form class="form-horizontal" ng-submit="saveResult()">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="event">Event</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <select class="form-control" id="event" ng-change="updateCourseList()" ng-model="newResult.eventId"
+                                ng-options="e.id as e.name for e in events" ng-required="true"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="course">Course</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <select class="form-control" id="course" ng-model="newResult.courseId"
+                                ng-options="e.id as e.courseNumber for e in courses" ng-required="false"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="dob">Date</label>
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input class="form-control" close-text="Close" is-open="calendarStatus.opened"
+                                ng-model="newResult.date" ng-required="true" type="text"
+                                uib-datepicker-popup="dd-MMMM-yyyy"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="calendarStatus.opened = true"
+                                    type="button">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="grandPrix">Is Grand Prix Result?</label>
+                    <div class="col-sm-10">
+                        <div class="checkbox">
+                            <input id="grandPrix" ng-model="newResult.isGrandPrixResult" type="checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">Name</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input class="form-control" ng-model="newResult.runner" type="text"
+                                uib-typeahead="r as r.name for r in currentRunners | filter:{name:$viewValue} | limitTo:8">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="position">Position</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input id="position" min="0" ng-model="newResult.position" ng-required="false"
+                                placeholder="Position" type="number">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="time">Time</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input id="time" ng-model="newResult.time" ng-required="false"
+                                placeholder="Time (hh:mm:ss)" type="text">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="info">Info</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input id="info" ng-model="newResult.info" ng-required="false" type="text">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"></label>
+                    <div class="col-sm-10">
+                        <input class="btn btn-success" type="submit" value="Add">
+					    <input class="btn btn-default" type="reset" value="Clear">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"
+            ng-click="collapseSearchResultsForm = !collapseSearchResultsForm">Search results.</div>
+        <div class="panel-body" uib-collapse="collapseSearchResultsForm">
+            <form class="form-horizontal" ng-submit="searchResults()">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="event">Event</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <select id="event" class="form-control" ng-model="search.eventId"
+                                ng-options="e.id as e.name for e in events">
+                                <option value="">Any</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="fromDate">From Date</label>
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input id="fromDate" class="form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-valid-date" close-text="Close"
+                                is-open="fromCalendarStatus.opened" ng-model="search.fromDate" type="text"
+                                uib-datepicker-popup="dd-MMMM-yyyy"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="fromCalendarStatus.opened = true"
+                                    type="button">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="toDate">To Date</label>
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input class="form-control" close-text="Close" is-open="toCalendarStatus.opened"
+                                ng-model="search.toDate" type="text" uib-datepicker-popup="dd-MMMM-yyyy"/>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="toCalendarStatus.opened = true"
+                                    type="button">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="limit">Maximum number of results</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input id="limit" min="0" ng-model="search.numberOfResults" placeholder="Limit"
+                                type="number">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">                        
+						<input class="btn btn-success" type="submit" value="Find">
+                    </div>
+                </div>
+            </form>
+		</div>
+	</div>
+	<div class="panel panel-default">
+        <div class="panel-heading text-right">
+			Search with results:
+            <input ng-model="query">
+        </div>		
+		<div class="panel-body" cg-busy="findResultsPromise">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Member</th>
+                        <th>Position</th>
+                        <th>Time</th>
+                        <th>Is GP Result</th>
+                        <th>Info</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Event</th>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Member</th>
+                        <th>Position</th>
+                        <th>Time</th>
+                        <th>Is GP Result</th>
+                        <th>Info</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr current-page="currentPage"
+                        dir-paginate="result in results | filter:query | itemsPerPage: pageSize">
+                        <td>
+                            {{ showEvent(result) }}
+                        </td>
+                        <td>
+                            {{ result.courseId }}
+                        </td>
+                        <td>
+							<span e-name="date" e-required editable-text="result.date"
+                                onbeforesave="updateResultDate($data, result)">
+                                {{ result.date }}
+                            </span>
+							             
+                        </td>
+                        <td>
+                            {{ showRunner(result) }}
+                        </td>
+                        <td>
+                            <span e-name="position" e-required editable-text="result.position"
+                                onbeforesave="updateResultPosition($data, result.id)">
+                                {{ result.position || 'None' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="time" e-required editable-text="result.time"
+                                onbeforesave="updateResultTime($data, result.id)">
+                                {{ result.time || 'None' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a e-ng-options="s.value as s.text for s in grandPrixStatuses"
+                                editable-radiolist="result.isGrandPrixResult" href="#"
+                                onbeforesave="updateResultGrandPrixStatus($data, result.id)">
+                                {{ showGrandPrixStatus(result.isGrandPrixResult) }}
+                            </a>
+                        </td>
+                        <td>
+                            <span e-name="info" e-required editable-text="result.info"
+                                onbeforesave="updateResultInfo($data, result.id)">
+                                {{ result.info || 'None' }}
+                            </span>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeResult(result)">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <dir-pagination-controls auto-hide="false" boundary-links="true"
+                    template-url="templates/dirPagination.tpl.html"></dir-pagination-controls>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="center-panel">
+  <h2>This is the Runner of the Month editor</h2>
+	<div class="panel panel-default"> 
+	<div class="panel-heading">Declare runner of the month winners</div>
+	 <div class="panel-body" >
+<form class="form-horizontal" ng-submit="submit()">
+<div class="form-group">
+    <label for="year" class="col-sm-2 control-label">Year</label>
+    <div class="col-sm-4">
+	 <select class="form-control" id="year" ng-model="year" ng-options="y for y in years"></select>     
+    </div>
+	<label for="month" class="col-sm-2 control-label">Month</label>
+    <div class="col-sm-4">
+      <select class="form-control" id="month" ng-model="month" ng-options="m.id as m.text for m in months"></select>   
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="adultMale" class="col-sm-2 control-label">Adult Male</label>
+    <div class="col-sm-10">
+	 <select class="form-control" id="adultMale" ng-model="adultMale" ng-options="m.id as m.name for m in members" ng-required="false"></select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="adultFemale" class="col-sm-2 control-label">Adult Female</label>
+    <div class="col-sm-10">
+       <select class="form-control" id="adultFemale" ng-model="adultFemale" ng-options="m.id as m.name for m in members" ng-required="false"></select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="junior" class="col-sm-2 control-label">Junior</label>
+    <div class="col-sm-10">
+           <select class="form-control" id="junior" ng-model="junior" ng-options="m.id as m.name for m in members" ng-required="false"></select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label"></label>
+    <div class="col-sm-10">
+       <input type="submit" class="btn btn-primary" value="Submit"/>
+    </div>
+  </div>
+</form>
+ </div>
+</div>
+</div>
