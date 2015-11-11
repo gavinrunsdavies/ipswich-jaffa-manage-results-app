@@ -8,11 +8,11 @@
  * Factory in the ipswichJaffaResultsManagementApp.
  */
 angular.module('ipswichJaffaResultsManagementApp')
-.factory('dataFactory', function ($http, $cacheFactory) {
+.factory('dataFactory', function ($http, $cacheFactory, myConfig) {
 	// Service logic
 	// ...
 
-	const baseUrl = 'http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v1/';
+	const baseUrl = myConfig.apiUrl;
 	
 	var getDistances = function () {		
 		return $http.get(baseUrl + 'distances', {cache:true});

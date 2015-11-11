@@ -3,13 +3,13 @@
 angular.module('ipswichJaffaResultsManagementApp')
  
 .factory('AuthenticationService',
-    ['Base64', '$http', '$cookieStore', '$rootScope',
-    function (Base64, $http, $cookieStore, $rootScope) {
+    ['Base64', '$http', '$cookieStore', '$rootScope', 'myConfig',
+    function (Base64, $http, $cookieStore, $rootScope, myConfig) {
         var service = {};
 
         service.Login = function (username, password, callback) {
 
-			const url = 'http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v1/login';
+			const url = myConfig.apiUrl + 'login';
 	
             return $http.post( url, { username: Base64.encode(username), password: Base64.encode(password) });
         };
