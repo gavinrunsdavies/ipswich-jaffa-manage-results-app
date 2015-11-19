@@ -27,7 +27,7 @@ var myApp = angular
 			'cgBusy'
 		])
 	.constant('myConfig', {
-		"apiUrl": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v1/",		
+		"apiUrl": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v1/",		
 	})
 	.config(function ($routeProvider) {
 		$routeProvider
