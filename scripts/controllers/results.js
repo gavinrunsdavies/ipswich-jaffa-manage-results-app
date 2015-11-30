@@ -107,6 +107,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				result.date = utilityFactory.formatDate($scope.newResult.date);
 				result.courseId = $scope.newResult.courseId;
 				result.isGrandPrixResult = $scope.newResult.isGrandPrixResult;
+				result.team = $scope.newResult.team;
 				
 				if (typeof result.courseId === "undefined")
 					result.courseId = 0;
@@ -154,7 +155,8 @@ angular.module('ipswichJaffaResultsManagementApp')
 					time : result.time,
 					info : result.info,
 					date : result.date,
-					isGrandPrixResult : result.isGrandPrixResult
+					isGrandPrixResult : result.isGrandPrixResult,
+					team: result.team
 				};
 				$scope.results.unshift(inserted);							
 			};
@@ -176,6 +178,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				var updatedResult = {};
 				updatedResult.position = result.position;
 				updatedResult.info = result.info;
+				updatedResult.team = result.team;
 				updatedResult.runnerId = result.runnerId;
 				updatedResult.eventId = result.eventId;
 				updatedResult.time = result.time;
@@ -196,6 +199,17 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 			$scope.updateResultPosition = function (position, resultId) {
 				dataFactory.updateResult(resultId, 'position', position)
+				.then(
+					function (data) {
+					return true;
+				},
+					function (reason) {
+					alert('Failed: ' + reason);
+				});
+			};
+			
+			$scope.updateResultTeamNumber = function (team, resultId) {
+				dataFactory.updateResult(resultId, 'scoring_team', team)
 				.then(
 					function (data) {
 					return true;
