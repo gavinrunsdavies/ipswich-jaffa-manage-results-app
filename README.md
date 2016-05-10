@@ -7,14 +7,15 @@ This functionality is only accessible to valid Ipswich JAFFA Wordpress users wit
 
   * Results
     * View
-    * Add
+	* Add
     * Delete
 	* Edit -
-	  * Grand Prix status
 	  * Finish Position
 	  * Race Time
+	  * Team
 	  * Additional Information
-	  * Race Date
+	  * Associated Event
+	  * Associated Race
 	* Search - by Event, From Date, To Date
   * Events
     * View
@@ -24,17 +25,25 @@ This functionality is only accessible to valid Ipswich JAFFA Wordpress users wit
 	  * Name
 	  * Website URL	  
 	* Merge
-  * Event Courses
+  * Races  
     * View
     * Add
     * Delete (only those with out results)
 	* Edit -
+	  * Associated Event
+	  * Description
+	  * Course Type
 	  * Course Number
-	  * County
+	  * County	  
       * Area
-      * Registered Distance	  
-	  * Certified Accurate
-	  * Type
+	  * Country
+	  * Conditions
+	  * Venue
+	  * Grand Prix Status
+  * Meetings
+    * View
+	* Add 
+	* Associate and disassociate races
   * Runners
     * View
     * Add
