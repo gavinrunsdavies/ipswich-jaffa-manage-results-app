@@ -17,7 +17,7 @@
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
 	 <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">         
-    <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-busy.min.css" />
     <!-- endbuild -->
 	<style>
 	
@@ -91,6 +91,70 @@ body {
   z-index: 10;
 }
 
+/**
+ * For the correct positioning of the placeholder element, the dnd-list and
+ * it's children must have position: relative
+ */
+ul[dnd-list],
+ul[dnd-list] > li {
+	position: relative;
+}
+
+/**
+ * The dnd-list should always have a min-height,
+ * otherwise you can't drop to it once it's empty
+ */
+ul[dnd-list] {
+    min-height: 42px;
+    padding-left: 0px;
+}
+
+/**
+ * The dndDraggingSource class will be applied to
+ * the source element of a drag operation. It makes
+ * sense to hide it to give the user the feeling
+ * that he's actually moving it.
+ */
+ul[dnd-list] .dndDraggingSource {
+    display: none;
+}
+
+/**
+ * An element with .dndPlaceholder class will be
+ * added to the dnd-list while the user is dragging
+ * over it.
+ */
+ul[dnd-list] .dndPlaceholder {
+    display: block;
+    background-color: #ddd;
+    min-height: 42px;
+}
+
+/**
+ * The dnd-lists's child elements currently MUST have
+ * position: relative. Otherwise we can not determine
+ * whether the mouse pointer is in the upper or lower
+ * half of the element we are dragging over. In other
+ * browsers we can use event.offsetY for this.
+ */
+ul[dnd-list] li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+}
+
+/**
+ * Show selected elements in green
+ */
+ul[dnd-list] li.selected {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
 </style>
   </head>
   <body ng-controller="BodyController">
@@ -111,7 +175,9 @@ body {
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="#/">Home</a></li>
-             <li ng-hide="hideMenu"><a ng-href="#/events">Events</a></li>
+             <li ng-hide="hideMenu"><a ng-href="#/events">Events</a></li>			 
+			 <li ng-hide="hideMenu"><a ng-href="#/races">Races</a></li>
+			 <li ng-hide="hideMenu"><a ng-href="#/meetings">Meetings</a></li>
 			 <li ng-hide="hideMenu"><a ng-href="#/runners">Runners</a></li>
 			 <li ng-hide="hideMenu"><a ng-href="#/results">Results</a></li>              
 			 <li ng-hide="hideMenu"><a ng-href="#/rotm">Runner of the Month</a></li>   
@@ -150,7 +216,8 @@ body {
    
     <script src="bower_components/bootstrap-bower/ui-bootstrap-tpls.min.js"></script>
 	<script src="bower_components/angular-xeditable/dist/js/xeditable.min.js"></script>	
-	<script src="bower_components/angular-busy/dist/angular-busy.min.js"></script>	
+	<script src="bower_components/angular-busy.min.js"></script>	
+	<script src="bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js"></script>
 	<!-- https://github.com/cgross/angular-busy -->
     <!-- endbower -->
     <!-- endbuild -->
@@ -161,7 +228,9 @@ body {
 		<script src="scripts/controllers/login.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/events.js"></script>
-        <script src="scripts/controllers/results.js"></script>
+		<script src="scripts/controllers/races.js"></script>
+		<script src="scripts/controllers/meetings.js"></script>
+        <script src="scripts/controllers/results.js"></script>		
         <script src="scripts/controllers/runners.js"></script>
 		<script src="scripts/controllers/runner-of-the-month.js"></script>
 		<script src="scripts/services/authentication.js"></script>

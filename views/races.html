@@ -1,0 +1,246 @@
+<div class="center-panel">
+    <h2>This is the Race editor</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p>View races, add new and edit existing races.</p>           
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Add new race</div>
+        <div class="panel-body">
+            <form class="form-horizontal" ng-submit="saveRace()">
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="event">Event</label>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<select class="form-control" id="event" ng-change="eventChanged()" ng-model="newRace.eventId"
+								ng-options="e.id as e.name for e in events | orderBy:'name'" ng-required="true">
+								<option value="">Please select...</option>
+							</select>
+						</div>
+					</div>					
+					<label class="col-sm-2 control-label" for="date">Date</label>
+					<div class="col-sm-4">
+						<div class="input-group">
+							<input class="form-control" close-text="Close" is-open="calendarStatus.opened"
+								ng-model="newRace.date" ng-required="true" type="text"
+								uib-datepicker-popup="dd-MMMM-yyyy"/>
+							<span class="input-group-btn">
+								<button class="btn btn-default" ng-click="calendarStatus.opened = true"
+									type="button">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="course">Course Number</label>
+					<div class="col-sm-4">			
+						<input class="form-control" id="course" ng-model="newRace.courseNumber" type="text" ng-required="false" placeholder="Course Number e.g. 2014022">
+					</div>
+					<label class="col-sm-2 control-label" for="conditions">Conditions</label>
+					<div class="col-sm-4">				
+							<input id="conditions" class="form-control" ng-model="newRace.conditions" ng-required="false" type="text" placeholder="e.g. Weather conditions, ascent climbed (fell) etc">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="description">Name / Description</label>
+					<div class="col-sm-4">
+						<input id="description" class="form-control" ng-model="newRace.description" ng-required="false" type="text" placeholder="e.g. Senior Men, U17 Ladies, Fun run">
+					</div>
+					<label class="col-sm-2 control-label" for="venue">Venue</label>
+					<div class="col-sm-4">
+						<input id="venue" class="form-control" ng-model="newRace.venue" ng-required="false" type="text" placeholder="e.g. Northgate Sports Centre, London Hyde Park">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="country">Country</label>
+					<div class="col-sm-4">
+						<select class="form-control" id="country" ng-model="newRace.countryCode"
+								ng-options="c.code as c.name for c in countries" ng-required="false"></select>
+					</div>
+					<label class="col-sm-2 control-label" for="grandPrix">Is Grand Prix Race?</label>
+					<div class="col-sm-4">
+						<div class="checkbox">
+							<input id="grandPrix" ng-model="newRace.isGrandPrixRace" type="checkbox">
+						</div>
+					</div>
+				</div>
+				<div class="form-group" uib-collapse="newRace.countryCode != 'GB'">
+					<label class="col-sm-2 control-label" for="county">English County</label>
+					<div class="col-sm-4">
+						 <select class="form-control" id="county" ng-model="newRace.county"
+								ng-options="c for c in counties" ng-required="false">
+									<option value="">Please select...</option>
+						 </select>
+					</div>
+					<label class="col-sm-2 control-label" for="area">Area</label>
+					<div class="col-sm-4">
+						<select class="form-control" id="area" ng-model="newRace.area"
+									ng-options="a for a in areas" ng-required="false">
+										<option value="">Please select...</option>
+						</select>
+					</div>
+				</div>	
+				<div class="form-group">
+					<label class="col-sm-2 control-label" for="distance">Distance</label>
+					<div class="col-sm-4">
+						<select id="month" class="form-control" ng-model="newRace.distanceId"
+							ng-options="d.id as d.text for d in distances">
+							<option value="">Please select...</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label" for="courseType">Course Type</label>
+					<div class="col-sm-4">
+							<select id="courseType" class="form-control" ng-model="newRace.courseTypeId"
+								ng-options="c.id as c.description for c in courseTypes">
+								<option value="">Please select...</option>
+							</select>
+					</div>						
+				</div>
+				<div class="form-group">
+						<label class="col-sm-2 control-label"></label>
+						<div class="col-sm-10">
+							<input class="btn btn-success" type="submit" value="Add New">
+						</div>
+					</div>  
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Edit, or delete event races. Currently the distance and date is not
+            editable as these need further changes to recalculate past results.</div>
+        <div class="panel-body">           
+            <!-- Event Race list -->
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+						<th>Event</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Course Type</th>
+						<th>Course No.</th>
+						<th>County</th>
+						<th>Area</th>
+						<th>Country</th>						
+						<th>Conditions</th>						
+						<th>Venue</th>						
+						<th>Distance</th>						
+						<th>Grand Prix?</th>
+                        <th># of Results</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+						<th>Event</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Course Type</th>
+						<th>Course No.</th>
+						<th>County</th>
+						<th>Area</th>
+						<th>Country</th>						
+						<th>Conditions</th>						
+						<th>Venue</th>						
+						<th>Distance</th>						
+						<th>Grand Prix?</th>
+                        <th># of Results</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr current-page="currentPage"
+                        dir-paginate="race in races | itemsPerPage: pageSize">
+						<td>
+                           <a e-name="name" e-ng-options="e.id as e.name for e in events | orderBy:'name'"
+                                editable-select="race.eventId" href="#"
+								onbeforesave="updateRaceEvent($data, 'event_id', race)">
+                                {{ showEvent(race.eventId) }}
+                            </a>
+                        </td>
+                        <td>
+                            <span e-name="description" e-required editable-text="race.description"
+                                onbeforesave="updateRace($data, 'description', race.id)">
+                                {{ race.description || 'empty' }}
+                            </span>
+                        </td>
+						 <td>
+                            {{ race.date }}
+                        </td>
+                        <td>
+                            <a e-name="courseTypeId" e-ng-options="d.id as d.description for d in courseTypes"
+                                editable-select="race.courseTypeId" href="#"
+								onbeforesave="updateRace($data, 'course_type_id', race.id)">
+                                {{ showCourseType(race.courseTypeId) }}
+                            </a>
+                        </td>
+						   <td>
+                            <span e-name="courseNumber" e-required editable-text="race.courseNumber"
+                                onbeforesave="updateRace($data, 'courseNumber', race.id)">
+                                {{ race.courseNumber || 'empty' }}
+                            </span>
+                        </td>
+						<td>
+                            <a e-ng-options="county for county in counties"
+                                editable-select="race.county" href="#"
+                                onbeforesave="updateRace($data, 'county',  race.id)">
+                                {{ showCounty(race.county) }}
+                            </a>
+                        </td>
+						<td>
+                             <a e-ng-options="area for area in areas"
+                                editable-select="race.area" href="#"
+                                onbeforesave="updateRace($data, 'area', race.id)">
+                                {{ showArea(race.area) }}
+                            </a>
+                        </td>
+						<td>
+                            <a e-ng-options="c.code as c.name for c in countries"
+                                editable-select="race.countryCode" href="#"
+                                onbeforesave="updateRaceCountry($data, 'country_code', race)">
+                                {{ showCountry(race.countryCode) }}
+                            </a>
+                        </td>
+						<td>
+                             <span e-name="conditions" editable-text="race.conditions"
+                                onbeforesave="updateRace($data, 'conditions', race.id)">
+                                {{ race.conditions || 'empty' }}
+                            </span>
+                        </td>
+						<td>
+                             <span e-name="venue" editable-text="race.venue"
+                                onbeforesave="updateRace($data, 'venue', race.id)">
+                                {{ race.venue || 'empty' }}
+                            </span>
+                        </td>
+						<td>
+                            {{ race.distance }}
+                        </td>
+						 <td>
+                            <a e-ng-options="s.value as s.text for s in booleanStatuses"
+                                editable-radiolist="race.isGrandPrixRace" href="#"
+                                onbeforesave="updateRace($data, 'grand_prix', race.id)">
+                                {{ showBoolean(race.isGrandPrixRace) }}
+                            </a>
+                        </td>                       
+                        <td>
+                            {{ race.count }}
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeRace(race)"
+                                    ng-disabled="race.count > 0">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <dir-pagination-controls auto-hide="false" boundary-links="true"
+                    template-url="templates/dirPagination.tpl.html"></dir-pagination-controls>
+            </div>
+        </div>
+    </div>
+</div>

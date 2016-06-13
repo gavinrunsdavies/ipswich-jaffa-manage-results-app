@@ -24,10 +24,11 @@ var myApp = angular
 			'ngResource',
 			'ngRoute',
 			'ui.bootstrap',
-			'cgBusy'
+			'cgBusy',
+			'dndLists'
 		])
 	.constant('myConfig', {
-		"apiUrl": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v1/",		
+		"apiUrl": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",		
 	})
 	.config(function ($routeProvider) {
 		$routeProvider
@@ -46,6 +47,16 @@ var myApp = angular
 				events : ['dataFactory', function (dataFactory) {
 						return dataFactory.getEvents();
 					}
+				]
+			}
+		})
+		.when('/races', {
+			templateUrl : 'views/races.html',
+			controller : 'RaceCtrl',
+			resolve : {
+				events : ['dataFactory', function (dataFactory) {
+						return dataFactory.getEvents();
+					}
 				],
 				distances : ['dataFactory', function (dataFactory) {
 						return dataFactory.getDistances();
@@ -53,6 +64,28 @@ var myApp = angular
 				],
 				coursetypes : ['dataFactory', function (dataFactory) {
 						return dataFactory.getCourseTypes();
+					}
+				],
+				countries : ['dataFactory', function (dataFactory) {
+						return dataFactory.getCountries();
+					}
+				],
+				counties : ['dataFactory', function (dataFactory) {
+						return dataFactory.getEnglishCounties();
+					}
+				],
+				areas : ['dataFactory', function (dataFactory) {
+						return dataFactory.getRaceAreas();
+					}
+				]
+			}
+		})
+		.when('/meetings', {
+			templateUrl : 'views/meetings.html',
+			controller : 'MeetingCtrl',
+			resolve : {
+				events : ['dataFactory', function (dataFactory) {
+						return dataFactory.getEvents();
 					}
 				]
 			}

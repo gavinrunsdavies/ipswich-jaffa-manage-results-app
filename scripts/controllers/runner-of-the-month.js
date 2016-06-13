@@ -69,7 +69,11 @@ angular.module('ipswichJaffaResultsManagementApp')
 				dataFactory.saveRunnerOfTheMonth(result)
 				.then(
 					function (data) {
-					// Do nothing. Success.
+					$scope.year = 0;
+					$scope.month = 0;
+					$scope.adultMale = 0;
+					$scope.adultFemale = 0;
+					$scope.junior = 0;
 				},
 					function (reason) {
 					alert('Failed: ' + reason);

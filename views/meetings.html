@@ -1,0 +1,159 @@
+<div class="center-panel">
+    <h2>This is the Meetings editor</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p>A meeting is a collection of races across a given day or days. On a grand scale the Olympics is a meeting of several races lasting about three weeks. For us, it can be used to associate relay leg races of an event together e.g. Ekiden of SEAA road relays. It can also be used to group mulit day ultra races together.</p>
+			<p>To use, first select the event and then create a meeting for the given period. You don't need to input a name but do so if it is specific to that year.</p>
+			<p>Once you have selected or created your meeting you can drag and drop the available races to the associated races list.<small>Unfortunately this functionality only works on a desktop machine and not mobile devices.</small></p>
+        </div>
+    </div>
+	<div class="panel panel-info">
+        <div class="panel-heading">
+            <p>Select Event</p>
+        </div>
+		<div class="panel-body">
+			<label class="col-sm-1 control-label" for="event">Event</label>
+			<div class="col-sm-11">
+				<select id="event" class="form-control" ng-change="eventChanged()" ng-model="eventId"
+					ng-options="e.id as e.name for e in events | orderBy:'name'">
+					<option value="">Please select...</option>
+				</select>
+			</div>
+		</div>
+    </div>
+	<div class="panel panel-info">
+		<div class="panel-heading">Create Meeting</div>
+		<div class="panel-body">
+			<form class="form-horizontal" ng-submit="saveMeeting()">
+                <div class="form-group">					
+					<label class="col-sm-1 control-label" for="name">Name</label>
+                    <div class="col-sm-3">
+                        <input class="form-control" id="name" ng-model="newMeeting.name"
+                            ng-required="false" type="text">
+                    </div>	
+					<label class="col-sm-1 control-label" for="fromDate">From</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input class="form-control" close-text="Close" is-open="fromCalendarStatus.opened"
+								ng-model="newMeeting.fromDate" ng-required="true" type="text"
+								uib-datepicker-popup="dd-MMMM-yyyy"/>
+							<span class="input-group-btn">
+								<button class="btn btn-default" ng-click="fromCalendarStatus.opened = true"
+									type="button">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+					<label class="col-sm-1 control-label" for="ToDate">To</label>
+					<div class="col-sm-3">
+						<div class="input-group">
+							<input class="form-control" close-text="Close" is-open="toCalendarStatus.opened"
+								ng-model="newMeeting.toDate" ng-required="true" type="text"
+								uib-datepicker-popup="dd-MMMM-yyyy"/>
+							<span class="input-group-btn">
+								<button class="btn btn-default" ng-click="toCalendarStatus.opened = true"
+									type="button">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-1 control-label"></label>
+                    <div class="col-sm-11">
+                        <input class="btn btn-success" type="submit" value="Add"/>
+					    <input class="btn btn-default" type="reset" value="Clear">
+                    </div>
+                </div>
+            </form>
+		</div>
+	</div>
+	<div class="panel panel-info">
+		<div class="panel-heading">Exitsing Meetings</div>
+		<div class="panel-body">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>              
+                <tbody>
+                    <tr current-page="currentPage"
+                        dir-paginate="meeting in meetings | itemsPerPage: pageSize" ng-class="{success : meeting.id == meetingId}">
+                        <td>
+                            <span e-name="name" e-required editable-text="meeting.name"
+                                onbeforesave="updateMeetingName($data, meeting.id)">
+                                {{ meeting.name || 'empty' }}
+                            </span>
+                        </td>
+                       <td>
+                            <span e-name="fromDate" e-required editable-text="meeting.fromDate"
+                                onbeforesave="updateMeetingFromDate($data, meeting.id)">
+                                {{ meeting.fromDate || 'empty' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="toDate" e-required editable-text="meeting.toDate"
+                                onbeforesave="updateMeetingToDate($data, meeting.id)">
+                                {{ meeting.toDate || 'empty' }}
+                            </span>
+                        </td>
+                        <td style="white-space: nowrap">
+                            <div class="buttons">
+							    <button class="btn btn-success" ng-click="selectMeeting(meeting)">sel</button>
+                                <button class="btn btn-danger" ng-click="removeMeeting(meeting)">del</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center">
+                <dir-pagination-controls auto-hide="false" boundary-links="true"
+                    template-url="templates/dirPagination.tpl.html"></dir-pagination-controls>
+            </div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">Races Available</div>
+				 <div class="panel-body">
+					<ul dnd-list="races" 
+					    dnd-drop="raceDisassociated(event, index, item, external, type)"
+						dnd-disable-if="$scope.meetingId < 1">
+						<li ng-repeat="race in races | filter: raceFilter()"
+							dnd-draggable="race"
+							dnd-effect-allowed="move"
+							dnd-disable-if="$scope.meetingId < 1"
+							>
+							{{race.description + ' ' + race.date}}
+						</li>
+					</ul>
+				 </div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-info">
+				<div class="panel-heading">Races Associated</div>
+				<div class="panel-body">
+					<ul dnd-list="meetingRaces"
+				    	dnd-drop="raceAssociated(event, index, item, external, type)"
+						dnd-disable-if="$scope.meetingId < 1">
+						<li ng-repeat="mr in meetingRaces"
+							dnd-draggable="mr"							
+							dnd-effect-allowed="move"
+							dnd-disable-if="$scope.meetingId < 1"
+							>
+							{{mr.description + ' ' + mr.date}}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

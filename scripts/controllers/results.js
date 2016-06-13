@@ -2,19 +2,20 @@
 
 /**
  * @ngdoc function
- * @name ipswichJaffaResultsManagementApp.controller:ResultCtrl
+ * @name ipswichJaffaResultsManagementApp.controller:Result2Ctrl
  * @description
- * # ResultCtrl
+ * # Result2Ctrl
  * Controller of the ipswichJaffaResultsManagementApp
  */
 angular.module('ipswichJaffaResultsManagementApp')
 .controller('ResultCtrl', ['$scope', '$filter', '$uibModal', '$log', 'dataFactory', 'utilityFactory', 'results', 'runners', 'events', function ($scope, $filter, $uibModal, $log, dataFactory, utilityFactory, results, runners, events) {
-
+		
 			$scope.currentPage = 1;
 			$scope.pageSize = 10;
 			$scope.collapseAddResultsForm = true;
 			$scope.collapseSearchResultsForm = true;
-			
+			$scope.eventId = 0;
+			$scope.race = {};			
 			$scope.runners = runners.data;
 			$scope.currentRunners = $filter('filter')($scope.runners, {
 							isCurrentMember : '1'
@@ -22,17 +23,8 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.results = results.data;
 			$scope.events = events.data;
 			$scope.newResult = {};
-			$scope.courses = {};
+			$scope.races = {};
 			$scope.findResultsPromise;
-
-			$scope.grandPrixStatuses = [{
-					value : 0,
-					text : 'No'
-				}, {
-					value : 1,
-					text : 'Yes'
-				}
-			];
 
 			$scope.searchResults = function () {	
 				$scope.loading = true;
@@ -53,15 +45,34 @@ angular.module('ipswichJaffaResultsManagementApp')
 				return new Date(parts[0], parts[1] - 1, parts[2]).toDateString();
 			};
 			
-			$scope.updateCourseList = function () {
-				if (typeof $scope.newResult.eventId === "undefined" ||
-					$scope.newResult.eventId < 1)
+			$scope.eventChanged = function () {
+				updateRaceList();				
+			};		
+			
+			var updateRaceList = function () {
+				if (typeof $scope.eventId === "undefined" ||
+					$scope.eventId < 1)
 					return;
 				
-				dataFactory.getCourses($scope.newResult.eventId)
+				dataFactory.getRaces($scope.eventId)
 				.then(
 					function (data) {
-					$scope.courses = data.data;					
+					$scope.races = data.data;					
+				},
+					function (reason) {
+					alert('Failed: ' + reason);
+				});
+			};
+			
+			$scope.updateTableRaceList = function (eventId) {
+				if (typeof eventId === "undefined" ||
+					eventId < 1)
+					return;
+				
+				dataFactory.getRaces(eventId)
+				.then(
+					function (data) {
+					$scope.tableRaces = data.data;					
 				},
 					function (reason) {
 					alert('Failed: ' + reason);
@@ -96,26 +107,43 @@ angular.module('ipswichJaffaResultsManagementApp')
 					return result.eventName || 'Not set';
 				}
 			};
-
+			
+			$scope.showRace = function (result) {
+				if (result.raceId && $scope.tableRaces.length) {
+					var selected = $filter('filter')($scope.tableRaces, {
+							id : result.raceId
+						}, true);
+					return selected.length ? selected[0].date + (selected[0].description != "" ? ' ' + selected[0].description : '') : 'Not Set';
+				} else {
+					if (result.raceDescription === "") {
+						return result.date;
+					} else {
+						return result.date + ' ' + result.raceDescription;
+					}
+				}
+			};
+			
 			$scope.saveResult = function () {
 				var result = {};
+				result.eventId = $scope.eventId;
+				result.raceId = $scope.race.id;
+				
 				result.position = $scope.newResult.position;
 				result.info = $scope.newResult.info;
 				result.runnerId = $scope.newResult.runner.id;
-				result.eventId = $scope.newResult.eventId;
 				result.time = $scope.newResult.time;
-				result.date = utilityFactory.formatDate($scope.newResult.date);
-				result.courseId = $scope.newResult.courseId;
-				result.isGrandPrixResult = $scope.newResult.isGrandPrixResult;
-				result.team = $scope.newResult.team;
+				result.date = $scope.race.date;
+				result.courseId = $scope.race.courseId;
+				result.isGrandPrixResult = $scope.race.isGrandPrixRace;
+				result.team = $scope.newResult.team;				
 				
 				if (typeof result.courseId === "undefined")
 					result.courseId = 0;
 				if (typeof result.isGrandPrixResult === "undefined")
 					result.isGrandPrixResult = 0;
 				if (typeof result.time !== "undefined" && result.time.length == 5)
-					result.time = "00:" + result.time;	
-				
+					result.time = "00:" + result.time;
+					
 				// Clear form
 				clearNewResultsForm();
 				
@@ -145,7 +173,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				});
 
 				return true;
-			};
+			};				
 			
 			var addResult = function (result) {
 				var inserted = {
@@ -164,43 +192,16 @@ angular.module('ipswichJaffaResultsManagementApp')
 			};
 			
 			var clearNewResultsForm = function() {
-				var date = $scope.newResult.date;
-				var eventId = $scope.newResult.eventId;
-				var isGrandPrixResult = $scope.newResult.isGrandPrixResult;
 				$scope.newResult = {};
-				$scope.newResult.eventId = eventId;
-				$scope.newResult.date = date;
-				$scope.newResult.isGrandPrixResult = isGrandPrixResult;
-			};
-			
-			// Delete and reinsert
-			$scope.updateResultDate = function (date, result) {
-				$scope.removeResult(result);
-				
-				var updatedResult = {};
-				updatedResult.position = result.position;
-				updatedResult.info = result.info;
-				updatedResult.team = result.team;
-				updatedResult.runnerId = result.runnerId;
-				updatedResult.eventId = result.eventId;
-				updatedResult.time = result.time;
-				updatedResult.date = date;
-				updatedResult.courseId = result.courseId;				
-				updatedResult.isGrandPrixResult = result.isGrandPrixResult;				
-				
-				dataFactory.saveResult(updatedResult)
-				.then(
-					function (data) {
-					// Update table
-					addResult(data.data);
-				},
-					function (reason) {
-					alert('Failed: ' + reason);
-				});
+				$scope.newResult.eventId = $scope.eventId;
+				$scope.newResult.raceId = $scope.race.id;
+				$scope.newResult.courseId = $scope.race.courseId;
+				$scope.newResult.date = $scope.race.date;
+				$scope.newResult.isGrandPrixResult = $scope.race.isGrandPrixRace;;
 			};
 
-			$scope.updateResultPosition = function (position, resultId) {
-				dataFactory.updateResult(resultId, 'position', position)
+			$scope.updateResult = function (field, value, resultId) {
+				dataFactory.updateResult(resultId, field, value)
 				.then(
 					function (data) {
 					return true;
@@ -208,50 +209,6 @@ angular.module('ipswichJaffaResultsManagementApp')
 					function (reason) {
 					alert('Failed: ' + reason);
 				});
-			};
-			
-			$scope.updateResultTeamNumber = function (team, resultId) {
-				dataFactory.updateResult(resultId, 'scoring_team', team)
-				.then(
-					function (data) {
-					return true;
-				},
-					function (reason) {
-					alert('Failed: ' + reason);
-				});
-			};
-
-			$scope.updateResultTime = function (time, resultId) {
-				dataFactory.updateResult(resultId, 'result', time)
-				.then(
-					function (data) {
-					return true;
-				},
-					function (reason) {
-					alert('Failed: ' + reason);
-				});
-			};
-
-			$scope.updateResultGrandPrixStatus = function (status, resultId) {
-				dataFactory.updateResult(resultId, 'grandprix', status)
-				.then(
-					function (data) {
-					return true;
-				},
-					function (reason) {
-					alert('Failed: ' + reason);
-				});
-			};
-
-			$scope.updateResultInfo = function (info, resultId) {
-				dataFactory.updateResult(resultId, 'info', info)
-				.then(
-					function (data) {
-					return true;
-				},
-					function (reason) {
-					alert('Failed: ' + reason);
-				});
-			};
+			};			
 		}
 	]);

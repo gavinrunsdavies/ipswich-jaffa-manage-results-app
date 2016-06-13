@@ -25,17 +25,29 @@ angular.module('ipswichJaffaResultsManagementApp')
 	var getEvents = function () {
 		return $http.get(baseUrl + 'events', {cache:true});
 	};
-
-	var getCourses = function (eventId) {
-		return $http.get(baseUrl + 'events/' + eventId + '/courses');
+	
+	var getRaces = function (eventId) {
+		return $http.get(baseUrl + 'events/' + eventId + '/races');
 	};
 
 	var getCourseTypes = function () {
-		return $http.get(baseUrl + 'coursetype', {cache:true});
+		return $http.get(baseUrl + 'coursetypes', {cache:true});
 	};
 
 	var getRunners = function () {
 		return $http.get(baseUrl + 'runners', {cache:true});
+	};
+	
+	var getMeeting = function (eventId, meetingId) {
+		return $http.get(baseUrl + 'events/' + eventId + '/meetings/' + meetingId, {cache:false});
+	};
+	
+	var getMeetings = function (eventId) {
+		return $http.get(baseUrl + 'events/' + eventId + '/meetings', {cache:false});
+	};
+	
+	var getMeetingRaces = function (eventId, meetingId) {
+		return $http.get(baseUrl + 'events/' + eventId + '/meetings/' + meetingId + '/races', {cache:false});
 	};
 
 	var getResults = function (eventId, from, to, limit) {
@@ -68,6 +80,18 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 		return $http.get(url);
 	};
+	
+	var getCountries = function () {
+		return $http.get('data/countryCodes.json', {cache:true});
+	};
+	
+	var getEnglishCounties = function () {
+		return $http.get('data/englishCounties.json', {cache:true});
+	};
+	
+	var getRaceAreas = function () {
+		return $http.get('data/areas.json', {cache:true});
+	};
 
 	var deleteEvent = function (eventId) {
 		var promise = $http.delete (baseUrl + 'events/' + eventId);
@@ -77,11 +101,11 @@ angular.module('ipswichJaffaResultsManagementApp')
   
 		return promise;
 	};
-
-	var deleteCourse = function (courseId, eventId) {
-		return $http.delete (baseUrl + 'events/' + eventId + '/courses/' + courseId);
+	
+	var deleteRace = function (eventId, raceId) {
+		return $http.delete (baseUrl + 'events/' + eventId + '/race/' + raceId);
 	};
-
+	
 	var deleteRunner = function (runnerId) {
 		var promise = $http.delete (baseUrl + 'runners/' + runnerId);
 		
@@ -93,6 +117,10 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 	var deleteResult = function (resultId) {
 		return $http.delete (baseUrl + 'results/' + resultId);
+	};
+	
+	var deleteMeeting = function (eventId, meetingId) {
+		return $http.delete (baseUrl + 'events/' + eventId + '/meetings/' + meetingId);
 	};
 
 	var saveEvent = function (data) {
@@ -106,12 +134,14 @@ angular.module('ipswichJaffaResultsManagementApp')
   
 		return promise;
 	};
-
-	var saveCourse = function (data, eventId) {
-		return $http.post(
-			baseUrl + 'events/' + eventId + '/courses', {
-			course : data
-		});
+	
+	var saveRace = function (data) {
+		var promise = $http.post(
+			baseUrl + 'races', {
+			race : data
+		});	
+  
+		return promise;
 	};
 
 	var saveRunner = function (data) {
@@ -128,6 +158,12 @@ angular.module('ipswichJaffaResultsManagementApp')
 	var saveResult = function (data) {
 		return $http.post(baseUrl + 'results', {
 			'result' : data
+		});
+	};
+	
+	var saveMeeting = function (eventId, data) {
+		return $http.post(baseUrl + 'events/' + eventId + '/meetings', {
+			'meeting' : data
 		});
 	};
 	
@@ -162,6 +198,15 @@ angular.module('ipswichJaffaResultsManagementApp')
 		return promise;
 	};
 	
+	var updateRace = function (raceId, field, value) {
+		var promise = $http.patch(baseUrl + 'races/' + raceId, {
+			'field' : field,
+			'value' : value
+		});
+  
+		return promise;
+	};
+	
 	var updateRunner = function (runnerId, field, value) {
 		var promise = $http.patch(baseUrl + 'runners/' + runnerId, {
 			'field' : field,
@@ -180,28 +225,45 @@ angular.module('ipswichJaffaResultsManagementApp')
 			'value' : value
 		});
 	};
+	
+	var updateMeeting = function (eventId, meetingId, field, value) {
+		return $http.patch(baseUrl + 'events/' + eventId + '/meetings/' + meetingId, {
+			'field' : field,
+			'value' : value
+		});
+	};
 
 	// Public API here
 	return {
 		getEvents : getEvents,
 		getDistances : getDistances,
+		getRaces : getRaces,
 		getGenders : getGenders,
 		getRunners : getRunners,
 		getResults : getResults,
+		getCountries : getCountries,
+		getEnglishCounties : getEnglishCounties,
+		getRaceAreas : getRaceAreas,
+		getMeeting : getMeeting,
+		getMeetings : getMeetings,
+		getMeetingRaces: getMeetingRaces,
+		getCourseTypes : getCourseTypes,
 		deleteEvent : deleteEvent,
+		deleteRace : deleteRace,
 		deleteRunner : deleteRunner,
 		deleteResult : deleteResult,
-		deleteCourse : deleteCourse,
+		deleteMeeting : deleteMeeting,
 		saveEvent : saveEvent,
 		saveResult : saveResult,
 		saveRunner : saveRunner,
+		saveMeeting : saveMeeting,
 		saveRunnerOfTheMonth : saveRunnerOfTheMonth,
-		mergeEvents : mergeEvents,
-		getCourses : getCourses,
-		saveCourse : saveCourse,
-		getCourseTypes : getCourseTypes,
+		saveRace : saveRace,
+		mergeEvents : mergeEvents,			
 		updateEvent : updateEvent,
 		updateRunner : updateRunner,
-		updateResult : updateResult
+		updateResult : updateResult,
+		updateRace: updateRace,
+		updateMeeting: updateMeeting
 	};
 });
