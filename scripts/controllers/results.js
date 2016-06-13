@@ -113,6 +113,8 @@ angular.module('ipswichJaffaResultsManagementApp')
 					result.courseId = 0;
 				if (typeof result.isGrandPrixResult === "undefined")
 					result.isGrandPrixResult = 0;
+				if (typeof result.time !== "undefined" && result.time.length == 5)
+					result.time = "00:" + result.time;	
 				
 				// Clear form
 				clearNewResultsForm();
