@@ -113,6 +113,17 @@ angular.module('ipswichJaffaResultsManagementApp')
 				}
 			};
 
+			$scope.showDistance = function (distance) {
+				if (distance && $scope.distances.length) {
+					var selected = $filter('filter')($scope.distances, {
+							text: distance
+						}, true);
+					return selected.length ? selected[0].text : 'Not set';
+				} else {
+					return 'Not set';
+				}
+			};
+			
 			$scope.updateRace = function (data, field, raceId) {
 				dataFactory.updateRace(raceId, field, data)
 				.then(

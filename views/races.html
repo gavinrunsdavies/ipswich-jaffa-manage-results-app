@@ -86,7 +86,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label" for="distance">Distance</label>
 					<div class="col-sm-4">
-						<select id="month" class="form-control" ng-model="newRace.distanceId"
+						<select id="distance" class="form-control" ng-model="newRace.distanceId"
 							ng-options="d.id as d.text for d in distances">
 							<option value="">Please select...</option>
 						</select>
@@ -216,7 +216,11 @@
                             </span>
                         </td>
 						<td>
-                            {{ race.distance }}
+                              <a e-ng-options="d.id as d.text for d in distances"
+                                editable-select="race.distance" href="#"
+                                onbeforesave="updateRace($data, 'distance_id', race.id)">
+                                {{ showDistance(race.distance) }}
+                            </a>
                         </td>
 						 <td>
                             <a e-ng-options="s.value as s.text for s in booleanStatuses"
@@ -231,7 +235,7 @@
                         <td style="white-space: nowrap">
                             <div class="buttons">
                                 <button class="btn btn-danger" ng-click="removeRace(race)"
-                                    ng-disabled="race.count > 0">del</button>
+                                    ng-disabled="race.count > 0">del</button>															
                             </div>
                         </td>
                     </tr>
