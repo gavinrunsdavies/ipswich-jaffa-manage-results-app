@@ -201,6 +201,9 @@ angular.module('ipswichJaffaResultsManagementApp')
 			};
 
 			$scope.updateResult = function (field, value, resultId) {
+				if (field == 'result' && value.length == 5)
+					value = "00:" + value;
+					
 				dataFactory.updateResult(resultId, field, value)
 				.then(
 					function (data) {
