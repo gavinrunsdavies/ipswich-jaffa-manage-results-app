@@ -16,6 +16,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.collapseSearchResultsForm = true;
 			$scope.eventId = 0;
 			$scope.race = {};			
+			$scope.resultPlaceHolderText;
 			$scope.runners = runners.data;
 			$scope.currentRunners = $filter('filter')($scope.runners, {
 							isCurrentMember : '1'
@@ -96,6 +97,15 @@ angular.module('ipswichJaffaResultsManagementApp')
 					});
 				return (grandPrix && selected.length) ? selected[0].text : 'Not set';
 			};
+			
+			$scope.showResultPlaceHolderText = function(resultMeasurementUnitTypeId) {
+				if ($scope.race.resultMeasurementUnitTypeId == 1) 
+					return "Time. Format: hh:mm:ss or mm:ss";
+				if ($scope.race.resultMeasurementUnitTypeId == 2) 
+					return "Time in seconds e.g. 12.3";
+				if ($scope.race.resultMeasurementUnitTypeId == 3) 
+					return "Distance in meters e.g. 2.3";
+			};
 
 			$scope.showEvent = function (result) {
 				if (result.eventId && $scope.events.length) {
@@ -131,7 +141,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				result.position = $scope.newResult.position;
 				result.info = $scope.newResult.info;
 				result.runnerId = $scope.newResult.runner.id;
-				result.time = $scope.newResult.time;
+				result.result = $scope.newResult.result;
 				result.date = $scope.race.date;
 				result.courseId = $scope.race.courseId;
 				result.isGrandPrixResult = $scope.race.isGrandPrixRace;
@@ -141,11 +151,16 @@ angular.module('ipswichJaffaResultsManagementApp')
 					result.courseId = 0;
 				if (typeof result.isGrandPrixResult === "undefined")
 					result.isGrandPrixResult = 0;
-				if (typeof result.time !== "undefined" && result.time.length == 5)
-					result.time = "00:" + result.time;
+				if (typeof result.result !== "undefined") {
+					if ($scope.race.resultMeasurementUnitTypeId == 1 && result.result.length == 5) { // hh:mm:ss						
+						result.result = "00:" + result.result;			
+					}
+				}					
 					
 				// Clear form
 				clearNewResultsForm();
+				
+				$scope.focusInput=true;
 				
 				dataFactory.saveResult(result)
 				.then(
@@ -182,7 +197,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 					runnerId : result.runnerId,
 					position : result.position,
 					courseId : result.courseId,
-					time : result.time,
+					result : result.result,
 					info : result.info,
 					date : result.date,
 					isGrandPrixResult : result.isGrandPrixResult,
@@ -201,8 +216,9 @@ angular.module('ipswichJaffaResultsManagementApp')
 			};
 
 			$scope.updateResult = function (field, value, resultId) {
-				if (field == 'result' && value.length == 5)
-					value = "00:" + value;
+				if (field == 'result' && $scope.race.resultMeasurementUnitTypeId == 1 && value.length == 5) { // hh:mm:ss						
+						value = "00:" + value;
+				}
 					
 				dataFactory.updateResult(resultId, field, value)
 				.then(
