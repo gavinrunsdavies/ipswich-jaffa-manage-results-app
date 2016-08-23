@@ -56,11 +56,11 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label" for="time">Time</label>
+						<label class="col-sm-2 control-label" for="result">Result</label>
 						<div class="col-sm-4">
-							<input id="time" class="form-control" ng-model="newResult.time" ng-required="false"
-									placeholder="Time (hh:mm:ss)" type="text">
-						</div>
+							<input id="result" class="form-control" ng-model="newResult.result" ng-required="false" ng-pattern="^((?:(?:(\d\d):)?([0-5]\d):)?([0-5]\d))|(\d(\.\d)?)$"
+									placeholder="{{ showResultPlaceHolderText(race.resultMeasurementUnitTypeId) }}" type="text">
+						</div>	
 					</div>
 					 <div class="form-group">
 						<label class="col-sm-2 control-label" for="team">Team</label>
@@ -164,7 +164,7 @@
                         <th>Date</th>
                         <th>Member</th>
                         <th>Position</th>
-                        <th>Time</th>
+                        <th>Result</th>
 						<th>Team</th>
                         <th>Info</th>
                         <th>Action</th>
@@ -177,7 +177,7 @@
                         <th>Date</th>
                         <th>Member</th>
                         <th>Position</th>
-                        <th>Time</th>
+                        <th>Result</th>
 						<th>Team</th>
                         <th>Info</th>
                         <th>Action</th>
@@ -212,9 +212,9 @@
                             </span>
                         </td>
                         <td>
-                            <span e-name="time" e-required editable-text="result.time"
+                            <span e-name="result" e-required editable-text="result.result"
                                 onbeforesave="updateResult('result', $data, result.id)">
-                                {{ result.time || 'None' }}
+                                {{ result.result || 'None' }}
                             </span>
                         </td>
 						 <td>
