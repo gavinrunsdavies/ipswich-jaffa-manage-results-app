@@ -13,6 +13,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 	// ...
 
 	const baseUrl = myConfig.apiUrl;
+	const baseV3Url = myConfig.apiV3Url;
 	
 	var getDistances = function () {		
 		return $http.get(baseUrl + 'distances', {cache:true});
@@ -37,6 +38,10 @@ angular.module('ipswichJaffaResultsManagementApp')
 	var getRunners = function () {
 		return $http.get(baseUrl + 'runners', {cache:true});
 	};
+	
+	var getRunnerOfTheMonthWinners = function () {
+		return $http.get(baseV3Url + 'runnerofthemonth/winners');
+	};;
 	
 	var getMeeting = function (eventId, meetingId) {
 		return $http.get(baseUrl + 'events/' + eventId + '/meetings/' + meetingId, {cache:false});
@@ -172,6 +177,12 @@ angular.module('ipswichJaffaResultsManagementApp')
 			'winners' : data
 		});
 	};
+	
+	var sendRunnerOfTheMonthVotesEmail = function (request) {
+		return $http.post(baseV3Url + 'runnerofthemonth/vote/email', {
+			'email' : request
+		});
+	};
 
 	var mergeEvents = function (fromEventId, toEventId) {
 		var promise = $http.post(
@@ -232,6 +243,13 @@ angular.module('ipswichJaffaResultsManagementApp')
 			'value' : value
 		});
 	};
+	
+	var updateRunnerOfTheMonth = function (runnerOfTheMonthId, value) {	
+		return $http.patch(baseV3Url + 'runnerofthemonth/winners/' + runnerOfTheMonthId, {
+			'field' : 'runnerId',
+			'value' : value
+		});
+	};	
 
 	// Public API here
 	return {
@@ -248,6 +266,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 		getMeetings : getMeetings,
 		getMeetingRaces: getMeetingRaces,
 		getCourseTypes : getCourseTypes,
+		getRunnerOfTheMonthWinners : getRunnerOfTheMonthWinners,
 		deleteEvent : deleteEvent,
 		deleteRace : deleteRace,
 		deleteRunner : deleteRunner,
@@ -259,11 +278,13 @@ angular.module('ipswichJaffaResultsManagementApp')
 		saveMeeting : saveMeeting,
 		saveRunnerOfTheMonth : saveRunnerOfTheMonth,
 		saveRace : saveRace,
+		sendRunnerOfTheMonthVotesEmail : sendRunnerOfTheMonthVotesEmail,
 		mergeEvents : mergeEvents,			
 		updateEvent : updateEvent,
 		updateRunner : updateRunner,
 		updateResult : updateResult,
 		updateRace: updateRace,
-		updateMeeting: updateMeeting
+		updateMeeting: updateMeeting,
+		updateRunnerOfTheMonth : updateRunnerOfTheMonth,
 	};
 });

@@ -29,6 +29,7 @@ var myApp = angular
 		])
 	.constant('myConfig', {
 		"apiUrl": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",		
+		"apiV3Url": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v3/",	
 	})
 	.config(function ($routeProvider) {
 		$routeProvider
@@ -128,6 +129,10 @@ var myApp = angular
 			resolve : {
 				runners : ['dataFactory', function (dataFactory) {
 						return dataFactory.getRunners();
+					}
+				],
+				winners : ['dataFactory', function (dataFactory) {
+						return dataFactory.getRunnerOfTheMonthWinners();
 					}
 				]
 			}
