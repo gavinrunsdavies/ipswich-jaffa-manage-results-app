@@ -5,7 +5,7 @@
         <div class="panel-heading"
             ng-click="collapseAddResultsForm = !collapseAddResultsForm"><a role="button">Add new results</a></div>
         <div class="panel-body" uib-collapse="collapseAddResultsForm">
-            <form class="form-horizontal" ng-submit="saveRace()">		
+            <form class="form-horizontal">		
 				<fieldset>			
 					<legend>Race Details</legend>
 					<div class="form-group">
@@ -86,6 +86,130 @@
 			</form>
         </div>
     </div>
+	<div class="panel panel-default">
+        <div class="panel-heading" ng-click="collapseAutoloadResultsForm = !collapseAutoloadResultsForm">Autoload results.</div>
+		<div class="panel-body" uib-collapse="collapseAutoloadResultsForm">
+		    <form class="form-horizontal" ng-submit="autoloadResults()">
+               <fieldset>			
+					<legend>Race Details</legend>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="event">Event</label>
+						<div class="col-sm-3">
+							<div class="input-group">
+								<select class="form-control" id="event" ng-change="eventChanged()" ng-model="eventId"
+									ng-options="e.id as e.name for e in events | orderBy:'name'" ng-required="true">
+									<option value="0">Please select...</option>
+								</select>
+							</div>
+						</div>
+						<label class="col-sm-2 control-label" for="existingRaceDate">Race</label>
+						 <div class="col-sm-3">
+							<div class="input-group">
+								<select class="form-control" id="existingRaceDate" ng-model="race"
+									ng-options="r as (r.date + (r.description != null ? ' ' + r.description : '')) for r in races" ng-required="true" ></select>
+								<span class="input-group-btn">
+									<a ng-href="#/races" href="#/races">
+										<button class="btn btn-default" type="button">
+											<i class="glyphicon glyphicon-plus"></i>
+										</button>
+									</a>
+								</span>							
+							</div>
+						</div>
+						
+					</div>	
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="chipTimingResultId">Chip Timing Result Id</label>
+						<div class="col-sm-10">
+							<div class="input-group">
+								<input id="chipTimingResultId" min="0" ng-model="chipTimingResultId"
+									type="number">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">                        
+							<input class="btn btn-success" type="submit" value="Load" ng-disabled="!(eventId > 0 && race.id > 0)">
+						</div>
+					</div>
+				</fieldset>
+            </form>
+		</div>
+		<div class="panel-body" uib-collapse="collapseAutoloadResultsForm">
+            <table class="table table-bordered table-hover table-condensed">
+				<thead>
+					<tr>
+						<th colspan="6">Showing {{autoloadMatchedResults.length}} results, of which {{(autoloadMatchedResults | filter:{runnerId : 0} : true).length }} were unmatched.</th>
+					</tr>
+				</thead>
+                <thead>
+                    <tr>                      
+                        <th>Member</th>
+                        <th>Position</th>
+                        <th>Result</th>
+						<th>Team</th>
+                        <th>Info</th>
+						<th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>                  
+                        <th>Member</th>
+                        <th>Position</th>
+                        <th>Result</th>
+						<th>Team</th>
+                        <th>Info</th>
+						<th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr ng-repeat="autoloadResult in autoloadMatchedResults | orderBy:'position' | orderBy:'result'" ng-class="{danger: autoloadResult.runnerId == 0}">                       
+                        <td>
+                     		<a e-name="name" e-ng-options="r.id as r.name for r in runners | orderBy:'name'"
+                                editable-select="autoloadResult.runnerId" href="#">
+                                {{ showRunner(autoloadResult) }}
+                            </a>
+                        </td>
+                        <td>
+                            <span e-name="position" e-required editable-text="autoloadResult.position">
+                                {{ autoloadResult.position || 'None' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="result" e-required editable-text="autoloadResult.result">
+                                {{ autoloadResult.result || 'None' }}
+                            </span>
+                        </td>
+						 <td>
+                            <span e-name="team" e-required editable-text="autoloadResult.team">
+                                {{ autoloadResult.team || 'None' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span e-name="info" e-required editable-text="autoloadResult.info">
+                                {{ autoloadResult.info || 'None' }}
+                            </span>
+                        </td>      
+						<td style="white-space: nowrap">
+                            <div class="buttons">
+                                <button class="btn btn-danger" ng-click="removeAutoloadResult(autoloadResult)">del</button>
+                            </div>
+                        </td>						
+                    </tr>
+                </tbody>
+            </table>
+			<form class="form-horizontal" ng-submit="saveAutoloadResults()">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Save All Results</label>
+					<div class="col-sm-10">                        
+						<input class="btn btn-success" type="submit" value="Save" ng-disabled="(autoloadMatchedResults | filter:{runnerId : 0} : true).length > 0">
+						<input class="btn btn-default" type="reset" value="Clear" ng-click="clearAutoloadResults()">
+						<p>Note, results listed above that are highlighted with a red background are unmatched and will not be saved until the name is matched with our records.</p>
+					</div>
+				</div>
+            </form>
+        </div>
+	</div>
     <div class="panel panel-default">
         <div class="panel-heading"
             ng-click="collapseSearchResultsForm = !collapseSearchResultsForm">Search results.</div>

@@ -13,6 +13,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.currentPage = 1;
 			$scope.pageSize = 10;
 			$scope.collapseAddResultsForm = true;
+			$scope.collapseAutoloadResultsForm = true;
 			$scope.collapseSearchResultsForm = true;
 			$scope.eventId = 0;
 			$scope.race = {};			
@@ -26,6 +27,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.newResult = {};
 			$scope.races = {};
 			$scope.findResultsPromise;
+			$scope.autoloadMatchedResults = [];
 
 			$scope.searchResults = function () {	
 				$scope.loading = true;
@@ -133,6 +135,113 @@ angular.module('ipswichJaffaResultsManagementApp')
 				}
 			};
 			
+			$scope.autoloadResults = function () {
+				var result = {};
+				result.eventId = $scope.eventId;
+				result.raceId = $scope.race.id;
+				
+				var chipTimingResultId = $scope.chipTimingResultId;
+				result.position = $scope.newResult.position;			
+				
+				dataFactory.getChipTimingResults(chipTimingResultId)
+				.then(
+					function (data) {
+						addAutoloadResults(data.data);
+				},
+					function (reason) {
+					alert('Failed: ' + reason);
+				});
+			};
+			
+			$scope.clearAutoloadResults = function () {
+				$scope.autoloadMatchedResults = [];
+			}
+			
+			$scope.saveAutoloadResults = function () {
+				var copyOfResults = $scope.autoloadMatchedResults;
+				for (var i = 0; i < copyOfResults.length; i++) {
+					var currentResult = copyOfResults[i];
+					if (currentResult.runnerId > 0) {
+						var result = {};
+						result.eventId = $scope.eventId;
+						result.raceId = $scope.race.id;					
+						result.position = currentResult.position;
+						result.info = currentResult.info;
+						result.runnerId = currentResult.runnerId;
+						result.result = currentResult.result;
+						result.date = $scope.race.date;
+						result.courseId = $scope.race.courseId;
+						result.isGrandPrixResult = $scope.race.isGrandPrixRace;
+						result.team = currentResult.team;				
+						
+						if (typeof result.courseId === "undefined")
+							result.courseId = 0;
+						if (typeof result.isGrandPrixResult === "undefined")
+							result.isGrandPrixResult = 0;
+						if (typeof result.result !== "undefined" && $scope.race.resultMeasurementUnitTypeId == 1) {
+							var parts = result.result.split(':');
+							if ( parts.length == 1) { // ss 
+								result.result = "00:00:" + padTime(parts[0]);		
+							} else if (parts.length == 2) { // mm:ss						
+								result.result = "00:" + padTime(parts[0]) + ":" + padTime(parts[1]);		
+							} else if (parts.length == 3) { // hh:mm:ss						
+								result.result = padTime(parts[0]) + ":" + padTime(parts[1]) + ":" + padTime(parts[2])		
+							}
+						}					
+						
+						dataFactory.saveResult(result)
+						.then(
+							function (data) {
+							// Update committed results table
+							addResult(data.data);
+							
+							// Remove from preview table
+							var index = $scope.autoloadMatchedResults.indexOf(result);
+							$scope.autoloadMatchedResults.splice(index, 1);
+						},
+							function (reason) {
+							alert('Failed: ' + reason);
+						});
+					}
+				}
+			}
+			
+			var padTime = function (units) {
+				var padding = "00";
+				return padding.substring(units.length) + units;
+			}
+			
+			var addAutoloadResults = function (data) {
+				for (var i = 0; i < data.length; i++) {
+					var runnerId = getRunnerId(data[i].name);
+					var matched = {						
+						runnerId : runnerId,
+						runnerName : data[i].name,
+						position : data[i].position,
+						result : data[i].chip
+					};
+					$scope.autoloadMatchedResults.unshift(matched);						
+				}
+			};
+			
+			$scope.removeAutoloadResult = function (result) {
+			
+				var index = $scope.autoloadMatchedResults.indexOf(result);
+				if (index >= 0)
+					$scope.autoloadMatchedResults.splice(index, 1);
+				else
+					alert('Failed cannot find item in list');
+			
+				return true;
+			};
+			
+			var getRunnerId = function (name) {
+				var runner = $filter('filter')($scope.runners, {
+							name : name
+						}, true);
+				return runner.length ? runner[0].id : 0;
+			};
+			
 			$scope.saveResult = function () {
 				var result = {};
 				result.eventId = $scope.eventId;
@@ -194,6 +303,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				var inserted = {
 					id : result.id,
 					eventId : result.eventId,
+					raceId : result.raceId,
 					runnerId : result.runnerId,
 					position : result.position,
 					courseId : result.courseId,
@@ -212,7 +322,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				$scope.newResult.raceId = $scope.race.id;
 				$scope.newResult.courseId = $scope.race.courseId;
 				$scope.newResult.date = $scope.race.date;
-				$scope.newResult.isGrandPrixResult = $scope.race.isGrandPrixRace;;
+				$scope.newResult.isGrandPrixResult = $scope.race.isGrandPrixRace;
 			};
 
 			$scope.updateResult = function (field, value, resultId) {

@@ -8,7 +8,7 @@
  * Factory in the ipswichJaffaResultsManagementApp.
  */
 angular.module('ipswichJaffaResultsManagementApp')
-.factory('dataFactory', function ($http, $cacheFactory, myConfig) {
+.factory('dataFactory', ['$http', '$cacheFactory', 'myConfig', function ($http, $cacheFactory, myConfig) {
 	// Service logic
 	// ...
 
@@ -96,6 +96,13 @@ angular.module('ipswichJaffaResultsManagementApp')
 	
 	var getRaceAreas = function () {
 		return $http.get('data/areas.json', {cache:true});
+	};
+	
+	var getChipTimingResults = function (resultId) {
+		var url = 'http://www.chiptiminguk.co.uk/ps/results/data/' + resultId + '/?team=Ipswich%20Jaffa%20RC&link=N&posStart=0&count=300';
+		return $http.post(baseV3Url + 'results/autoload', {
+			chipTimingResultsUrl: url			
+			});				
 	};
 
 	var deleteEvent = function (eventId) {
@@ -267,6 +274,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 		getMeetingRaces: getMeetingRaces,
 		getCourseTypes : getCourseTypes,
 		getRunnerOfTheMonthWinners : getRunnerOfTheMonthWinners,
+		getChipTimingResults: getChipTimingResults,
 		deleteEvent : deleteEvent,
 		deleteRace : deleteRace,
 		deleteRunner : deleteRunner,
@@ -287,4 +295,4 @@ angular.module('ipswichJaffaResultsManagementApp')
 		updateMeeting: updateMeeting,
 		updateRunnerOfTheMonth : updateRunnerOfTheMonth,
 	};
-});
+}]);
