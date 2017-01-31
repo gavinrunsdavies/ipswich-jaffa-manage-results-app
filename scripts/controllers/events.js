@@ -77,5 +77,20 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 				return true;
 			};
+			
+			$scope.mergeEvents = function () {
+				var result = dataFactory.mergeEvents($scope.fromEvent.id, $scope.toEvent.id)
+					.then(
+						function (data) {
+						var index = $scope.events.indexOf($scope.fromEvent.id);
+						if (index >= 0)
+							$scope.events.splice(index, 1);
+						else
+							alert('Failed cannot find item in list');
+					},
+						function (reason) {
+						alert('Failed: ' + reason);
+					});
+			};
 		}
 	]);

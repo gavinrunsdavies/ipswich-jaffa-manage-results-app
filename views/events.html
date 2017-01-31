@@ -93,22 +93,34 @@
             </div>
         </div>
     </div>
+	<div class="panel panel-default">        
         <div class="panel-heading">Merge results from two events in to one</div>
         <div class="panel-body">
-            <form class="form-inline" ng-submit="mergeEvents()">
+            <form class="form-horizontal" ng-submit="mergeEvents()">
                 <div class="form-group">
-                    <label for="fromEvent">From Event</label>
-                    <select class="form-control" id="fromEvent" name="singleSelect" ng-model="fromEvent">
-                        <option ng-repeat="option in events" value="{{option.id}}">{{option.name}}</option>
-                    </select>
+                    <label for="fromEvent" class="col-sm-2 control-label">From Event</label>                    
+					<div class="col-sm-10">
+						<select class="form-control" id="fromEvent" ng-model="fromEvent"
+							ng-options="e as e.name for e in events | orderBy:'name'" ng-required="true">
+							<option value="">Please select...</option>
+						</select>
+					</div>
                 </div>
                 <div class="form-group">
-                    <label for="toEvent">To Event</label>
-                    <select class="form-control" id="fromEvent" name="singleSelect" ng-model="toEvent">
-                        <option ng-repeat="option in events" value="{{option.id}}">{{option.name}}</option>
-                    </select>
+                    <label for="toEvent" class="col-sm-2 control-label">To Event</label>                    
+					<div class="col-sm-10">
+						<select class="form-control" id="toEvent" ng-model="toEvent"
+							ng-options="e as e.name for e in events | orderBy:'name'" ng-required="true">
+							<option value="">Please select...</option>
+						</select>
+					</div>
                 </div>
-                <input class="btn btn-success" type="submit" value="Merge"/>
+				<div class="form-group">
+					<label class="col-sm-2 control-label"></label>  
+					<div class="col-sm-10">
+						<input class="btn btn-success" type="submit" value="Merge"/>
+					</div>
+				</div>
             </form>
         </div>
     </div>
