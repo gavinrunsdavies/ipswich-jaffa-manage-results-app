@@ -82,7 +82,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				var result = dataFactory.mergeEvents($scope.fromEvent.id, $scope.toEvent.id)
 					.then(
 						function (data) {
-						var index = $scope.events.indexOf($scope.fromEvent.id);
+						var index = $scope.events.indexOf($scope.fromEvent);
 						if (index >= 0)
 							$scope.events.splice(index, 1);
 						else
