@@ -81,7 +81,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				return true;
 			};
 			
-			$scope.updateMemberName = function (data, runnerId) {
+			$scope.updateRunnerName = function (data, runnerId) {
 				if (data.length < 2) {
 					return "Invalid name; name must be at least 2 characters long.";
 				}

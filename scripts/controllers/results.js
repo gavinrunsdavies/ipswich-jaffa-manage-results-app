@@ -13,8 +13,9 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.currentPage = 1;
 			$scope.pageSize = 10;
 			$scope.collapseAddResultsForm = true;
-			$scope.collapseAutoloadResultsForm = true;
+			$scope.collapseImportResultsForm = true;
 			$scope.collapseSearchResultsForm = true;
+			$scope.collapseImportedResultsForm = true;
 			$scope.eventId = 0;
 			$scope.race = {};			
 			$scope.resultPlaceHolderText;
@@ -27,8 +28,12 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.newResult = {};
 			$scope.races = {};
 			$scope.findResultsPromise;
-			$scope.autoloadMatchedResults = [];
-
+			
+			$scope.importResultFields = ['Name', 'Position', 'Time', 'Info'];			
+			$scope.importMatchedFields = [];
+			$scope.importedData = [];
+			$scope.importedMatchedResults = [];
+			
 			$scope.searchResults = function () {	
 				$scope.loading = true;
 				var fromDate = utilityFactory.formatDate($scope.search.fromDate);			
@@ -133,32 +138,69 @@ angular.module('ipswichJaffaResultsManagementApp')
 						return result.date + ' ' + result.raceDescription;
 					}
 				}
-			};
+			};		
 			
-			$scope.autoloadResults = function () {
-				var result = {};
-				result.eventId = $scope.eventId;
-				result.raceId = $scope.race.id;
+			$scope.loadResults = function () {	
 				
-				var chipTimingResultId = $scope.chipTimingResultId;
-				result.position = $scope.newResult.position;			
-				
-				dataFactory.getChipTimingResults(chipTimingResultId)
+				dataFactory.loadResults($scope.resultsFile, $scope.numberOfHeaderRows)
 				.then(
 					function (data) {
-						addAutoloadResults(data.data);
+						$scope.importedData = data.data;
 				},
 					function (reason) {
 					alert('Failed: ' + reason);
 				});
-			};
-			
-			$scope.clearAutoloadResults = function () {
-				$scope.autoloadMatchedResults = [];
 			}
 			
-			$scope.saveAutoloadResults = function () {
-				var copyOfResults = $scope.autoloadMatchedResults;
+			$scope.clearImportedResults = function () {
+				$scope.importedData = [];
+				$scope.collapseImportResultsForm = true;
+			}
+			
+			$scope.matchRunnersForImportedDataResults = function () {
+				for (var i = 0; i < $scope.importedData.length; i++) {
+					
+					var importedResult = {};
+					var add = false;
+					
+					// Position
+					var positionIndex = $scope.importMatchedFields.indexOf('Position');
+					if (positionIndex >= 0) {
+						importedResult.position = parseInt($scope.importedData[i][positionIndex]);
+					}
+					
+					// Time
+					var timeIndex = $scope.importMatchedFields.indexOf('Time');
+					if (timeIndex >= 0) {
+						importedResult.result = $scope.importedData[i][timeIndex];
+					}
+					
+					// Info
+					var infoIndex = $scope.importMatchedFields.indexOf('Info');
+					if (infoIndex >= 0) {
+						importedResult.info = $scope.importedData[i][infoIndex];
+					}
+					
+					// Runner
+					var nameIndex = $scope.importMatchedFields.indexOf('Name');
+					if (nameIndex >= 0) {
+						importedResult.runnerName = $scope.importedData[i][nameIndex].trim();
+						importedResult.runnerId = getRunnerId($scope.importedData[i][nameIndex]);
+						add = true;
+					}
+					
+					if (add) {
+						$scope.importedMatchedResults.unshift(importedResult);
+					}					
+				}
+				
+				if ($scope.importedMatchedResults.length > 0) {
+					$scope.collapseImportedResultsForm = false;
+				}
+			}
+			
+			$scope.saveImportedResults = function () {
+				var copyOfResults = $scope.importedMatchedResults;
 				for (var i = 0; i < copyOfResults.length; i++) {
 					var currentResult = copyOfResults[i];
 					if (currentResult.runnerId > 0) {
@@ -196,8 +238,8 @@ angular.module('ipswichJaffaResultsManagementApp')
 							addResult(data.data);
 							
 							// Remove from preview table
-							var index = $scope.autoloadMatchedResults.indexOf(result);
-							$scope.autoloadMatchedResults.splice(index, 1);
+							var index = $scope.importedMatchedResults.indexOf(result);
+							$scope.importedMatchedResults.splice(index, 1);
 						},
 							function (reason) {
 							alert('Failed: ' + reason);
@@ -209,26 +251,13 @@ angular.module('ipswichJaffaResultsManagementApp')
 			var padTime = function (units) {
 				var padding = "00";
 				return padding.substring(units.length) + units;
-			}
+			}				
 			
-			var addAutoloadResults = function (data) {
-				for (var i = 0; i < data.length; i++) {
-					var runnerId = getRunnerId(data[i].name);
-					var matched = {						
-						runnerId : runnerId,
-						runnerName : data[i].name,
-						position : data[i].position,
-						result : data[i].chip
-					};
-					$scope.autoloadMatchedResults.unshift(matched);						
-				}
-			};
+			$scope.removeImportedResult = function (result) {
 			
-			$scope.removeAutoloadResult = function (result) {
-			
-				var index = $scope.autoloadMatchedResults.indexOf(result);
+				var index = $scope.importedMatchedResults.indexOf(result);
 				if (index >= 0)
-					$scope.autoloadMatchedResults.splice(index, 1);
+					$scope.importedMatchedResults.splice(index, 1);
 				else
 					alert('Failed cannot find item in list');
 			
@@ -236,10 +265,14 @@ angular.module('ipswichJaffaResultsManagementApp')
 			};
 			
 			var getRunnerId = function (name) {
-				var runner = $filter('filter')($scope.runners, {
-							name : name
-						}, true);
-				return runner.length ? runner[0].id : 0;
+				var normalisedName = name.toLowerCase().replace(/\s+/g, ' ').trim();;
+				for (var i = 0; i < $scope.runners.length; i++) {
+					var runner = $scope.runners[i];					
+					if (runner.name.toLowerCase().replace(/\s+/g, ' ').trim() == normalisedName)
+						return runner.id;
+				};
+				
+				return 0;
 			};
 			
 			$scope.saveResult = function () {

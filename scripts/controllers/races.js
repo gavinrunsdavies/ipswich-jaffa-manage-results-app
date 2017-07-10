@@ -206,5 +206,24 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 				return true;
 			};
+			
+			$scope.copyRace = function (race) {
+				$scope.newRace = { 
+					eventId: race.eventId,
+					date: race.date,
+					courseNumber: race.courseNumber,
+					conditions: race.conditions,
+					description: race.description,
+					venue: race.venue,
+					countryCode: race.countryCode,
+					county: race.county,
+					isGrandPrixRace: race.isGrandPrixRace,
+					area: race.area,
+					courseTypeId: race.courseTypeId,
+					distanceId: race.distance									
+				};
+
+				return true;
+			};
 		}
 	]);

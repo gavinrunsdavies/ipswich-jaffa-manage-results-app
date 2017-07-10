@@ -98,11 +98,15 @@ angular.module('ipswichJaffaResultsManagementApp')
 		return $http.get('data/areas.json', {cache:true});
 	};
 	
-	var getChipTimingResults = function (resultId) {
-		var url = 'http://www.chiptiminguk.co.uk/ps/results/data/' + resultId + '/?team=Ipswich%20Jaffa%20RC&link=N&posStart=0&count=300';
-		return $http.post(baseV3Url + 'results/autoload', {
-			chipTimingResultsUrl: url			
-			});				
+	var loadResults = function (file, numberOfHeaderRows) {		
+		var fd = new FormData();
+        fd.append('file', file);
+        //fd.append('name', name);
+		fd.append('numberOfHeaderRows', numberOfHeaderRows);
+		return $http.post(baseV3Url + 'results/load', fd, {
+			transformRequest: angular.identity,
+            headers: {'Content-Type': undefined,'Process-Data': false}
+         });
 	};
 
 	var deleteEvent = function (eventId) {
@@ -274,7 +278,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 		getMeetingRaces: getMeetingRaces,
 		getCourseTypes : getCourseTypes,
 		getRunnerOfTheMonthWinners : getRunnerOfTheMonthWinners,
-		getChipTimingResults: getChipTimingResults,
+		loadResults: loadResults,
 		deleteEvent : deleteEvent,
 		deleteRace : deleteRace,
 		deleteRunner : deleteRunner,

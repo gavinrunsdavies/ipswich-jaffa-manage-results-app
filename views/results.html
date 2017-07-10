@@ -87,9 +87,9 @@
         </div>
     </div>
 	<div class="panel panel-default">
-        <div class="panel-heading" ng-click="collapseAutoloadResultsForm = !collapseAutoloadResultsForm">Autoload results.</div>
-		<div class="panel-body" uib-collapse="collapseAutoloadResultsForm">
-		    <form class="form-horizontal" ng-submit="autoloadResults()">
+        <div class="panel-heading" ng-click="collapseImportResultsForm = !collapseImportResultsForm">Load results from a CSV (Excel) file.</div>
+		<div class="panel-body" uib-collapse="collapseImportResultsForm">
+		    <form class="form-horizontal" ng-submit="loadResults()">
                <fieldset>			
 					<legend>Race Details</legend>
 					<div class="form-group">
@@ -119,11 +119,16 @@
 						
 					</div>	
 					<div class="form-group">
-						<label class="col-sm-2 control-label" for="chipTimingResultId">Chip Timing Result Id</label>
-						<div class="col-sm-10">
+						<label class="col-sm-2 control-label" for="dataFilename">Data file</label>
+						<div class="col-sm-3">
 							<div class="input-group">
-								<input id="chipTimingResultId" min="0" ng-model="chipTimingResultId"
-									type="number">
+							 <input lass="form-control" id="dataFilename" type="file" file-model="resultsFile" multiple="false" />		
+							</div>
+						</div>
+						<label class="col-sm-2 control-label" for="numberOfHeaderRows"># header rows</label>
+						 <div class="col-sm-3">
+							<div class="input-group">
+								<input id="numberOfHeaderRows" class="form-control" min="0" ng-model="numberOfHeaderRows" ng-required="false" placeholder="0" type="number">							
 							</div>
 						</div>
 					</div>
@@ -135,11 +140,60 @@
 				</fieldset>
             </form>
 		</div>
-		<div class="panel-body" uib-collapse="collapseAutoloadResultsForm">
+		<div class="panel-body" uib-collapse="collapseImportResultsForm" ng-show="importedData.length > 0">			
             <table class="table table-bordered table-hover table-condensed">
 				<thead>
 					<tr>
-						<th colspan="6">Showing {{autoloadMatchedResults.length}} results, of which {{(autoloadMatchedResults | filter:{runnerId : 0} : true).length }} were unmatched.</th>
+						<th colspan="{{importedData[0].length}}">Showing 5 rows of {{importedData.length}} from the imported results.</th>
+					</tr>
+				</thead>
+                <thead>
+                    <tr>      
+						<th ng-repeat="(selectIndex, itemValue) in importedData[0]">
+							<select ng-model="importMatchedFields[selectIndex]">
+							  <option value="" ng-selected="importMatchedFields[selectedIndex] == item">
+								Select field type
+							  </option>
+							  <option value="0" ng-selected="importMatchedFields[selectedIndex] == item">
+								Ignore field 
+							  </option>
+							  <option ng-repeat="item in importResultFields"
+									   value="{{item}}"
+									   ng-disabled="item | hasIntersection:importMatchedFields"
+									   ng-selected="importMatchedFields[selectIndex] == item">
+								 {{item}} 
+							  </option>
+							</select>                  
+						</th>
+                    </tr>
+                </thead>                
+                <tbody>
+                    <tr ng-repeat="(importedResultRowIndex, importedResultRow) in importedData" ng-if="importedResultRowIndex < 5">      
+						<td ng-repeat="(importedResultItemIndex, importedResultItemValue) in importedResultRow track by $index">
+							{{ importedResultItemValue }}          
+						</td>
+                    </tr>
+                </tbody>
+            </table>
+			<form class="form-horizontal" ng-submit="matchRunnersForImportedDataResults()">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Match Runners</label>
+					<div class="col-sm-10">                        
+						<input class="btn btn-success" type="submit" value="Match" 
+								ng-disabled="!(('Name' | hasIntersection:importMatchedFields) && 
+								 			  (('Time' | hasIntersection:importMatchedFields) || 
+											   ('Position' | hasIntersection:importMatchedFields)))">
+						<input class="btn btn-default" type="reset" value="Clear" ng-click="clearImportedResults()">
+						<p>The Name column and either the Position or Time column or both needs to be associated with the data before runners can be matched.</p>
+					</div>
+				</div>
+            </form>			
+        </div>
+		<div class="panel-body" uib-collapse="collapseImportedResultsForm">
+            <table class="table table-bordered table-hover table-condensed">
+				<thead>
+					<tr>
+						<th colspan="6">Showing {{importedMatchedResults.length}} results, of which {{(importedMatchedResults | filter:{runnerId : 0} : true).length }} were unmatched.</th>
 					</tr>
 				</thead>
                 <thead>
@@ -163,47 +217,46 @@
                     </tr>
                 </tfoot>
                 <tbody>
-                    <tr ng-repeat="autoloadResult in autoloadMatchedResults | orderBy:'position' | orderBy:'result'" ng-class="{danger: autoloadResult.runnerId == 0}">                       
+                    <tr ng-repeat="importedResult in importedMatchedResults | orderBy:'position' | orderBy:'result'" ng-class="{danger: importedResult.runnerId == 0}">                       
                         <td>
                      		<a e-name="name" e-ng-options="r.id as r.name for r in runners | orderBy:'name'"
-                                editable-select="autoloadResult.runnerId" href="#">
-                                {{ showRunner(autoloadResult) }}
+                                editable-select="importedResult.runnerId" href="#">
+                                {{ showRunner(importedResult) }}
                             </a>
                         </td>
                         <td>
-                            <span e-name="position" e-required editable-text="autoloadResult.position">
-                                {{ autoloadResult.position || 'None' }}
+                            <span e-name="position" e-required editable-text="importedResult.position">
+                                {{ importedResult.position || 'None' }}
                             </span>
                         </td>
                         <td>
-                            <span e-name="result" e-required editable-text="autoloadResult.result">
-                                {{ autoloadResult.result || 'None' }}
+                            <span e-name="result" e-required editable-text="importedResult.result">
+                                {{ importedResult.result || 'None' }}
                             </span>
                         </td>
 						 <td>
-                            <span e-name="team" e-required editable-text="autoloadResult.team">
-                                {{ autoloadResult.team || 'None' }}
+                            <span e-name="team" e-required editable-text="importedResult.team">
+                                {{ importedResult.team || 'None' }}
                             </span>
                         </td>
                         <td>
-                            <span e-name="info" e-required editable-text="autoloadResult.info">
-                                {{ autoloadResult.info || 'None' }}
+                            <span e-name="info" e-required editable-text="importedResult.info">
+                                {{ importedResult.info || 'None' }}
                             </span>
                         </td>      
 						<td style="white-space: nowrap">
                             <div class="buttons">
-                                <button class="btn btn-danger" ng-click="removeAutoloadResult(autoloadResult)">del</button>
+                                <button class="btn btn-danger" ng-click="removeImportedResult(importedResult)">del</button>
                             </div>
                         </td>						
                     </tr>
                 </tbody>
             </table>
-			<form class="form-horizontal" ng-submit="saveAutoloadResults()">
+			<form class="form-horizontal" ng-submit="saveImportedResults()">
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Save All Results</label>
 					<div class="col-sm-10">                        
-						<input class="btn btn-success" type="submit" value="Save" ng-disabled="(autoloadMatchedResults | filter:{runnerId : 0} : true).length > 0">
-						<input class="btn btn-default" type="reset" value="Clear" ng-click="clearAutoloadResults()">
+						<input class="btn btn-success" type="submit" value="Save" ng-disabled="(importedMatchedResults | filter:{runnerId : 0} : true).length > 0">						
 						<p>Note, results listed above that are highlighted with a red background are unmatched and will not be saved until the name is matched with our records.</p>
 					</div>
 				</div>

@@ -28,8 +28,8 @@ var myApp = angular
 			'dndLists'
 		])
 	.constant('myConfig', {
-		"apiUrl": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",		
-		"apiV3Url": "http://www.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v3/",	
+		"apiUrl": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",		
+		"apiV3Url": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v3/",	
 	})
 	.config(function ($routeProvider) {
 		$routeProvider
@@ -196,3 +196,4 @@ myApp.controller('ModalDeleteInstanceCtrl', function ($scope, $modalInstance) {
 //http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
 //http://jasonwatmore.com/post/2015/03/10/AngularJS-User-Registration-and-Login-Example.aspx
 //https://github.com/colthreepv/angular-login-example
+//http://jameshill.io/articles/angular-third-party-injection-pattern/

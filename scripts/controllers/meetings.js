@@ -133,8 +133,9 @@ angular.module('ipswichJaffaResultsManagementApp')
 				var result = dataFactory.saveMeeting($scope.eventId, meeting)
 					.then(
 						function (data) {
-						$scope.meetings.unshift(data.data);
-					},
+							var inserted = {"id":data.data[0].id,"name":data.data[0].name,"fromDate":data.data[0].fromDate,"toDate":data.data[0].toDate};
+							$scope.meetings.unshift(inserted);
+						},
 						function (reason) {
 						alert('Failed: ' + reason);
 					});
