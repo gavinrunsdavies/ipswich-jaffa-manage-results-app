@@ -106,7 +106,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 		$scope.updateWinner = function (data, category, winner) {
 			if ((category == "girls" && winner.girls.id == undefined) ||
-			    (category == "boys" && winner.boys.id == undefined) ||
+				(category == "boys" && winner.boys.id == undefined) ||
 				(category == "ladies" && winner.ladies.id == undefined) ||
 				(category == "men" && winner.men.id == undefined)) {
 				var result = {
@@ -116,7 +116,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 
 				if (category == "girls") {
 					result.girls = data;
-			    } else if (category == "boys") {
+				} else if (category == "boys") {
 					result.boys = data;
 				} else if (category == "ladies") {
 					result.ladies = data;
@@ -133,7 +133,17 @@ angular.module('ipswichJaffaResultsManagementApp')
 							alert('Failed: ' + reason);
 						});
 			} else {
-				dataFactory.updateRunnerOfTheMonth(winner.id, data)
+				var id = 0;
+				if (category == "girls" && winner.girls.id != undefined)
+					id = winner.girls.winner_id;
+				else if (category == "boys" && winner.boys.id != undefined)
+					id = winner.boys.winner_id;
+				else if (category == "ladies" && winner.ladies.id != undefined)
+					id = winner.ladies.winner_id;
+				else if (category == "men" && winner.men.id != undefined)
+					id = winner.men.winner_id;
+
+				dataFactory.updateRunnerOfTheMonth(id, data)
 					.then(
 						function (data) {
 							return true;
@@ -151,7 +161,7 @@ angular.module('ipswichJaffaResultsManagementApp')
 				men: $scope.adultMale,
 				women: $scope.adultFemale,
 				boys: $scope.boys,
-				girls: $scope.girls,
+				girls: $scope.girls
 			};
 
 			dataFactory.saveRunnerOfTheMonth(result)
@@ -161,7 +171,8 @@ angular.module('ipswichJaffaResultsManagementApp')
 						$scope.month = 0;
 						$scope.adultMale = 0;
 						$scope.adultFemale = 0;
-						$scope.junior = 0;
+						$scope.boys = 0;
+						$scope.girls = 0;
 					},
 					function (reason) {
 						alert('Failed: ' + reason);
