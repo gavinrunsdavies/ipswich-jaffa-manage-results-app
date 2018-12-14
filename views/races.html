@@ -93,7 +93,7 @@
 					</div>
 					<label class="col-sm-2 control-label" for="courseType">Course Type</label>
 					<div class="col-sm-4">
-							<select id="courseType" class="form-control" ng-model="newRace.courseTypeId"
+							<select id="courseType" class="form-control" ng-model="newRace.courseTypeId" ng-required="true" 
 								ng-options="c.id as c.description for c in courseTypes">
 								<option value="">Please select...</option>
 							</select>
