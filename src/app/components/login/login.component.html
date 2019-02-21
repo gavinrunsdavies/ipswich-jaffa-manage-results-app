@@ -1,0 +1,24 @@
+<p>
+   login works!
+</p>
+<mat-toolbar>
+   <span>LOGIN</span>
+</mat-toolbar>
+<mat-card class="my-card">
+   <mat-card-content>
+      <form class="login-form">
+         <mat-form-field>
+            <input matInput placeholder="Enter your email" [formControl]="email" required>
+            <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+         </mat-form-field>
+         <mat-form-field class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'">
+            <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+         </mat-form-field>
+      </form>
+   </mat-card-content>
+   <mat-card-actions>
+      <button mat-raised-button (click)="login()" color="primary">LOGIN</button>
+   </mat-card-actions>
+</mat-card>
