@@ -1,6 +1,6 @@
 # Ipswich-JAFFA-RC
 
-REST API for the Ipswich JAFFA Running Club results database.
+AngularJS WebApp for administering the Ipswich JAFFA Running Club results.
 
 #### Functionality
 This functionality is only accessible to valid Ipswich JAFFA Wordpress users with the right levels user role capabilities.
