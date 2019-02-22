@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule, MatCardModule, MatInputModule, MatIconModule } from '@angular/material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule, MatCardModule, MatInputModule, MatIconModule, MatFormFieldModule,
+    MatProgressSpinnerModule } from '@angular/material';
 
 import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
@@ -14,6 +15,9 @@ import { LoginComponent } from './login.component';
         MatButtonModule,
         MatCardModule,
         MatIconModule,
+        MatFormFieldModule,
+        ReactiveFormsModule,
+        MatProgressSpinnerModule,
         FormsModule
     ],
     declarations: [LoginComponent]

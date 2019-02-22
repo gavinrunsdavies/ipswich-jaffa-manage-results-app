@@ -1,21 +1,28 @@
-<p>
-   login works!
-</p>
-<mat-card class="my-card">
+<mat-card class="login-card">
+   <mat-card-header>
+      <div mat-card-avatar>
+         <mat-icon>account_circle</mat-icon>
+      </div>
+      <mat-card-title>Ipswich JAFFA Result Management</mat-card-title>
+      <mat-card-subtitle>Login</mat-card-subtitle>
+   </mat-card-header>
    <mat-card-content>
-      <form class="login-form">
+      <form class="login-container">
          <mat-form-field>
-            <input matInput placeholder="Enter your email" required>
-            <mat-error *ngIf="email.invalid">getErrorMessage()</mat-error>
+            <input matInput placeholder="Enter your email" [formControl]="email" required>
+            <mat-error *ngIf="email.invalid">{{getErrorMessage('email')}}</mat-error>
          </mat-form-field>
-         <mat-form-field class="full-width">
+         <mat-form-field>
             <mat-label>Password</mat-label>
-            <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'">
+            <input matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'" [formControl]="password"
+               required>
             <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <mat-error *ngIf="password.invalid">{{getErrorMessage('password')}}</mat-error>
          </mat-form-field>
       </form>
    </mat-card-content>
    <mat-card-actions>
-      <button mat-raised-button (click)="login()" color="primary">LOGIN</button>
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+      <button *ngIf="!isLoading" mat-raised-button (click)="login()" color="primary">LOGIN</button>
    </mat-card-actions>
 </mat-card>
