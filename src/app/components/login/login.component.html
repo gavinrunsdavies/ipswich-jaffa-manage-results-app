@@ -1,15 +1,12 @@
 <p>
    login works!
 </p>
-<mat-toolbar>
-   <span>LOGIN</span>
-</mat-toolbar>
 <mat-card class="my-card">
    <mat-card-content>
       <form class="login-form">
          <mat-form-field>
-            <input matInput placeholder="Enter your email" [formControl]="email" required>
-            <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+            <input matInput placeholder="Enter your email" required>
+            <mat-error *ngIf="email.invalid">getErrorMessage()</mat-error>
          </mat-form-field>
          <mat-form-field class="full-width">
             <mat-label>Password</mat-label>
