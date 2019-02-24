@@ -1,37 +1,52 @@
 <p>
   runners works!
 </p>
-<mat-form-field>
-    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-  </mat-form-field>
-  
-  <div class="mat-elevation-z8">
+<div class="results-container mat-elevation-z8">
+  <div class="results-loading-shade" *ngIf="isLoading">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  </div>
+
+  <div class="results-table-container">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+
+    <!-- <div class="mat-elevation-z8"> -->
     <table mat-table [dataSource]="dataSource" matSort>
-  
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button>
+            <mat-icon aria-label="Delete" (click)="delete(row.id)">delete</mat-icon>
+          </button>
+          <button mat-icon-button>
+            <mat-icon aria-label="Edit" (click)="edit(row.id)">edit</mat-icon>
+          </button>
+        </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
         <td mat-cell *matCellDef="let row"> {{row.name}} </td>
       </ng-container>
-  
+
       <ng-container matColumnDef="gender">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Gender </th>
-        <td mat-cell *matCellDef="let row" [style.color]="row.color"> {{row.gender.name}} </td>
+        <td mat-cell *matCellDef="let row" [style.color]="row.color"> {{row.sex}} </td>
       </ng-container>
 
       <ng-container matColumnDef="dob">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Date of Birth </th>
-          <td mat-cell *matCellDef="let row"> {{row.dateOfBirth}} </td>
-        </ng-container>
-  
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date of Birth </th>
+        <td mat-cell *matCellDef="let row"> {{row.dateOfBirth}} </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;">
       </tr>
     </table>
-  
+
     <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </div>
+</div>

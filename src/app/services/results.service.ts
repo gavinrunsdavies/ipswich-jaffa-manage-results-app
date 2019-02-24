@@ -69,12 +69,18 @@ export class ResultsService {
       );
   }
 
-  getRunners(): Observable<Runner> {
+  getRunners(): Observable<Runner[]> {
     const url = `${this.baseUrl}/runners`;
-    return this.http.get<Runner>(url)
+    return this.http.get<Runner[]>(url)
       .pipe(
-        tap((runner: Runner) => this.log(`fetched runners ${JSON.stringify(runner)}`)),
-        catchError(this.handleError<Runner>('getRunners'))
+      //   .map(response => {
+      //     const array = JSON.parse(response.json()) as any[];
+      //     const details = array.map(data => new Runner(data));
+      //     return details;
+      // })
+        // map((runners: Runner[]) => {}), TODO
+        tap((runners: Runner[]) => this.log(`fetched runners ${JSON.stringify(runners)}`)),
+        catchError(this.handleError<Runner[]>('getRunners'))
       );
   }
 
@@ -271,8 +277,8 @@ export class ResultsService {
   updateEvent(eventId: number, field: string, value: string): Observable<any> {
     const url = `${this.baseUrl}/events/${eventId}`;
     return this.http.put(url, {
-      'field' : field,
-      'value' : value
+      field,
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated event: id=${eventId}, field=${field}, value=${value}`)),
       catchError(this.handleError<any>('updateEvent'))
@@ -282,8 +288,8 @@ export class ResultsService {
   updateRace(raceId: number, field: string, value: string): Observable<any> {
     const url = `${this.baseUrl}/races/${raceId}`;
     return this.http.put(url, {
-      'field' : field,
-      'value' : value
+      field,
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated race: id=${raceId}, field=${field}, value=${value}`)),
       catchError(this.handleError<any>('updateRace'))
@@ -293,8 +299,8 @@ export class ResultsService {
   updateRunner(runnerId: number, field: string, value: string): Observable<any> {
     const url = `${this.baseUrl}/runners/${runnerId}`;
     return this.http.put(url, {
-      'field' : field,
-      'value' : value
+      field,
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated runner: id=${runnerId}, field=${field}, value=${value}`)),
       catchError(this.handleError<any>('updateRunner'))
@@ -304,8 +310,8 @@ export class ResultsService {
   updateResult(resultId: number, field: string, value: string): Observable<any> {
     const url = `${this.baseUrl}/results/${resultId}`;
     return this.http.put(url, {
-      'field' : field,
-      'value' : value
+      field,
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated result: id=${resultId}, field=${field}, value=${value}`)),
       catchError(this.handleError<any>('updateResult'))
@@ -315,8 +321,8 @@ export class ResultsService {
   updateMeeting(eventId: number, meetingId: number, field: string, value: string): Observable<any> {
     const url = `${this.baseUrl}/events/${eventId}/meetings/${meetingId}`;
     return this.http.put(url, {
-      'field' : field,
-      'value' : value
+      field,
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated meeting: id=${meetingId}, field=${field}, value=${value}`)),
       catchError(this.handleError<any>('updateMeeting'))
@@ -326,8 +332,8 @@ export class ResultsService {
   updateRunnerOfTheMonth(runnerOfTheMonthId: number, value: string): Observable<any> {
     const url = `${this.baseV3Url}/runnerofthemonth/winners/${runnerOfTheMonthId}`;
     return this.http.put(url, {
-      'field' : 'runnerId',
-      'value' : value
+      field : 'runnerId',
+      value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated runner of the month: id=${runnerOfTheMonthId}, value=${value}`)),
       catchError(this.handleError<any>('updateResult'))

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { MatPaginatorModule, MatSortModule, MatTableModule, MatFormFieldModule, MatInputModule  } from '@angular/material';
+import { MatPaginatorModule, MatSortModule, MatTableModule, MatFormFieldModule,
+    MatInputModule, MatProgressSpinnerModule, MatIconModule, MatSnackBarModule  } from '@angular/material';
 
+import { ResultsService } from '../../services/results.service';
 import { RunnersRoutingModule } from './runners-routing.module';
 import { RunnersComponent } from './runners.component';
 
@@ -14,8 +16,14 @@ import { RunnersComponent } from './runners.component';
         MatTableModule,
         MatFormFieldModule,
         MatInputModule,
+        MatProgressSpinnerModule,
+        MatIconModule,
+        MatSnackBarModule,
         RunnersRoutingModule
     ],
-    declarations: [RunnersComponent]
+    declarations: [RunnersComponent],
+    providers: [
+        ResultsService
+    ]
 })
 export class RunnersModule { }

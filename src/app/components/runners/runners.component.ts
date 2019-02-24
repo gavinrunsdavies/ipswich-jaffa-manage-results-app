@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatSnackBar } from '@angular/material';
 
 import { Runner } from '../../models/runner';
+import { ResultsService } from '../../services/results.service';
 
 @Component({
   selector: 'app-runners',
@@ -9,23 +10,33 @@ import { Runner } from '../../models/runner';
   styleUrls: ['./runners.component.css']
 })
 export class RunnersComponent implements OnInit {
-  displayedColumns: string[] = ['id', 'name', 'gender', 'dob'];
+  displayedColumns: string[] = ['action', 'name', 'gender', 'dob'];
   dataSource: MatTableDataSource<Runner>;
+  isLoading: boolean;
+  runners: Runner[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor() {
-    // Create 100 users
-    const users = Array.from({length: 100}, (_, k) => createNewUser(k + 1));
-
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(users);
+  constructor(private resultsService: ResultsService,
+              private snackBar: MatSnackBar) {
+    this.dataSource = new MatTableDataSource(this.runners);
   }
 
   ngOnInit() {
+    this.getRunners();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  getRunners(): void {
+    this.isLoading = true;
+    this.resultsService.getRunners()
+      .subscribe(runners => {
+        // this.runners = runners;
+        this.dataSource.data = runners;
+        this.isLoading = false;
+      });
   }
 
   applyFilter(filterValue: string) {
@@ -35,17 +46,22 @@ export class RunnersComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-}
 
-function createNewUser(id: number): Runner {
+  delete(runnerId: number) {
+    console.log(`delete(${runnerId}) called`);
+    this.snackBar.open(`Runner  successfully deleted.`, '', {
+      duration: 1000
+    });
+    // return;
+    // //this.resultsService.deleteRunner(runnerId)
+    //   .subscribe(runner => {
+    //     this.snackBar.open(`Runner ${runner.name} successfully deleted.`, {
+    //       duration: 1000
+    //     });
+    //   });
+  }
 
-  return {
-    id: id,
-    name: 'name' + id,
-    dateOfBirth : '1980-05-16',
-    gender : {
-      id : 1,
-      name : 'Male'
-    }
-  };
+  edit(runnerId: number) {
+
+  }
 }

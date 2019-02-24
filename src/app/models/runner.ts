@@ -4,5 +4,7 @@ export interface  Runner {
     id: number;
     name: string;
     dateOfBirth: string;
-    gender: Gender;
+    //gender: Gender;
+    sex: string;
+    sexId: number;
 }
