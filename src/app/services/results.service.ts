@@ -51,12 +51,12 @@ export class ResultsService {
       );
   }
 
-  getGenders(): Observable<Gender> {
+  getGenders(): Observable<Gender[]> {
     const url = `${this.baseUrl}/genders`;
-    return this.http.get<Gender>(url)
+    return this.http.get<Gender[]>(url)
       .pipe(
-        tap((gender: Gender) => this.log(`fetched genders ${JSON.stringify(gender)}`)),
-        catchError(this.handleError<Gender>('getGenders'))
+        tap((genders: Gender[]) => this.log(`fetched genders ${JSON.stringify(genders)}`)),
+        catchError(this.handleError<Gender[]>('getGenders'))
       );
   }
 
