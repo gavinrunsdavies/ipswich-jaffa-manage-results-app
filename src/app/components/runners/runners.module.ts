@@ -9,7 +9,7 @@ import { MatPaginatorModule, MatSortModule, MatTableModule, MatFormFieldModule,
 import { ResultsService } from '../../services/results.service';
 import { RunnersRoutingModule } from './runners-routing.module';
 import { RunnersComponent } from './runners.component';
-import { RunnerEditorComponent } from './runner-editor-component/runner-editor.component';
+import { RunnerEditorComponent } from './runner-editor/runner-editor.component';
 
 @NgModule({
     imports: [
@@ -34,6 +34,9 @@ import { RunnerEditorComponent } from './runner-editor-component/runner-editor.c
     declarations: [RunnersComponent, RunnerEditorComponent],
     providers: [
         ResultsService
+    ],
+    entryComponents: [
+        RunnerEditorComponent
     ]
 })
 export class RunnersModule { }

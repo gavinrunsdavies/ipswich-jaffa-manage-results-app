@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { FormControl, Validators } from '@angular/forms';
 import { MatPaginator, MatSort, MatTableDataSource, MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
 import { Runner } from 'src/app/models/runner';
 import { Gender } from 'src/app/models/gender';
-import { RunnerEditorComponent } from './runner-editor-component/runner-editor.component';
+import { RunnerEditorComponent } from './runner-editor/runner-editor.component';
 import { ResultsService } from '../../services/results.service';
 
 @Component({
@@ -86,8 +85,7 @@ export class RunnersComponent implements OnInit {
     // TODO get runner
     const dialogRef = this.dialog.open(RunnerEditorComponent, {
       width: '250px',
-      // runner: runner
-  });
+      data: { runner }});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');

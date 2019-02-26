@@ -342,7 +342,7 @@ export class ResultsService {
 
   private log(message: string) {
     if (environment.production === false) {
-      console.log('TeamService: ' + message);
+      console.log('ResultsService: ' + message);
     }
   }
 
