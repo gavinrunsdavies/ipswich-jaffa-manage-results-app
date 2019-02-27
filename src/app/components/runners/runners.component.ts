@@ -84,7 +84,7 @@ export class RunnersComponent implements OnInit {
   edit(runner: Runner) {
     // TODO get runner
     const dialogRef = this.dialog.open(RunnerEditorComponent, {
-      width: '250px',
+      width: '550px',
       data: { runner }});
 
     dialogRef.afterClosed().subscribe(result => {

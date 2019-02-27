@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>Runner Editor - {{runner.name}}</h1>
 <div mat-dialog-content>
-  <form class="new-runner-form">
+  <form class="edit-runner-form">
     <mat-form-field class="full-width">
         <label>Name: </label>
       <input matInput placeholder="Name" #name maxlength="256" [formControl]="nameFormControl" required [(ngModel)]="runner.name">
