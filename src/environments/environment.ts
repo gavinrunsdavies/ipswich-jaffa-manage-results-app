@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'https://www.ipswichjaffa.org.uk'
+  baseUrl: 'http://test.ipswichjaffa.org.uk'
 };
 
 /*
