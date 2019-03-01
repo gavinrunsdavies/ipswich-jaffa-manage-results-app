@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatPaginator, MatSort, MatTableDataSource, MatSnackBar, MatDialog, MatDialogRef } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatSnackBar, MatDialog } from '@angular/material';
 import { Runner } from 'src/app/models/runner';
 import { Gender } from 'src/app/models/gender';
 import { RunnerEditorComponent } from './runner-editor/runner-editor.component';
 import { ResultsService } from '../../services/results.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-runners',
@@ -15,8 +16,10 @@ export class RunnersComponent implements OnInit {
   displayedColumns: string[] = ['name', 'gender', 'dob', 'action'];
   dataSource: MatTableDataSource<Runner>;
   isLoading: boolean;
+  formSubmittedIndicator = false;
   runners: Runner[];
   genders: Gender[];
+  newRunner: Runner = new Runner();
   nameFormControl = new FormControl('', [
     Validators.required
   ]);
@@ -28,6 +31,7 @@ export class RunnersComponent implements OnInit {
 
   constructor(
     private resultsService: ResultsService,
+    private notificationService: NotificationService,
     private snackBar: MatSnackBar,
     public dialog: MatDialog) {
     this.dataSource = new MatTableDataSource(this.runners);
@@ -89,12 +93,30 @@ export class RunnersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      // this.animal = result;
   });
   }
 
-  add(runner: Runner) {
-    console.log(`add(${runner.name}) called`);
+  addRunner() {
+    console.log(`addRunner called`);
+
+    try {
+      this.formSubmittedIndicator = true;
+      this.resultsService.saveRunner(this.newRunner)
+        .subscribe(
+        runner => {
+          this.notificationService.success(`Runner ${runner.name} saved to database`);
+          // TODO add to table
+          this.formSubmittedIndicator = false;
+        },
+        error => {
+          this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${error}`);
+          this.formSubmittedIndicator = false;
+        });
+    } catch (e) {
+      this.formSubmittedIndicator = false;
+      this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${e}`);
+      console.log('Error: ', e);
+    }
   }
 
   private deleteRowDataTable(runnerId) {

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule, MatSortModule, MatTableModule, MatFormFieldModule,
     MatInputModule, MatProgressSpinnerModule, MatIconModule, MatSnackBarModule, MatButtonModule, MatDatepickerModule,
-    MatRadioModule, MatNativeDateModule, MatDialogModule
+    MatRadioModule, MatNativeDateModule, MatDialogModule, MatCardModule
   } from '@angular/material';
 
 import { ResultsService } from '../../services/results.service';
@@ -29,6 +29,7 @@ import { RunnerEditorComponent } from './runner-editor/runner-editor.component';
         ReactiveFormsModule,
         MatNativeDateModule,
         MatDialogModule,
+        MatCardModule,
         RunnersRoutingModule
     ],
     declarations: [RunnersComponent, RunnerEditorComponent],

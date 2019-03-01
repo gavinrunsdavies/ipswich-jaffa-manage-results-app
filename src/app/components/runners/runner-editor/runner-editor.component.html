@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Runner Editor - {{runner.name}}</h1>
 <div mat-dialog-content>
   <form class="edit-runner-form">
-    <mat-form-field class="full-width">
+    <mat-form-field>
         <label>Name: </label>
       <input matInput placeholder="Name" #name maxlength="256" [formControl]="nameFormControl" required [(ngModel)]="runner.name">
       <mat-hint align="start">The full name as declared on the England Athletics portal</mat-hint>
@@ -18,7 +18,7 @@
         </mat-radio-button>
       </mat-radio-group>
     </div>
-    <mat-form-field class="full-width">
+    <mat-form-field>
       <input matInput [min]="minDateOfBirth" [max]="maxDateOfBirth" [matDatepicker]="dateOfBirth" placeholder="Date of Birth"
         required [formControl]="date" [(ngModel)]="runner.dateOfBirth">
       <mat-hint align="start">Minimum age is 8 years old</mat-hint>

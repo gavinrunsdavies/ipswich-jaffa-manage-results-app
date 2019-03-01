@@ -1,44 +1,50 @@
-<p>
-  runners works!
-</p>
-<div>
-  <form class="new-runner-form">
-    <mat-form-field class="full-width">
-      <input matInput placeholder="Name" #name maxlength="256" [formControl]="nameFormControl" required>
-      <mat-hint align="start">The full name as declared on the England Athletics portal</mat-hint>
-      <mat-hint align="end">{{name.value.length}} / 256</mat-hint>
-      <mat-error *ngIf="nameFormControl.hasError('required')">
-        Name is <strong>required</strong>
-      </mat-error>
-    </mat-form-field>
-    <div>
-      <label>Gender: </label>
-      <mat-radio-group [(ngModel)]="gender" required>
-        <mat-radio-button class="gender-radio-button" *ngFor="let gender of genders" [value]="gender.id">
-          {{gender.name}}
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-    <mat-form-field class="full-width">
-      <input matInput [min]="minDateOfBirth" [max]="maxDateOfBirth" [matDatepicker]="dateOfBirth" placeholder="Date of Birth"
-        required>
-      <mat-datepicker-toggle matSuffix [for]="dateOfBirth"></mat-datepicker-toggle>
-      <mat-datepicker #dateOfBirth></mat-datepicker>
-    </mat-form-field>
-    <button mat-button>Save</button>
-  </form>
-</div>
+<mat-card>
+  <mat-card-title>Runner Editor</mat-card-title>
+  <mat-card-subtitle>View members, add new or delete an existing member.</mat-card-subtitle>
+  <mat-card-content>
+    <p>Add new runners using the form below. To amend or delete existing entries search for them in the table below and
+      click the edit or delete icons.
+      Only runners with no results to their name can be deleted.</p>
+    <form class="new-runner-form" #addRunnerForm="ngForm" (ngSubmit)="addRunner(); addRunnerForm.reset()">
+      <mat-form-field [floatLabel]="auto">
+        <input matInput placeholder="Name" maxlength="256" [formControl]="nameFormControl" required #name>
+        <mat-hint align="start">The full name as declared on the England Athletics portal</mat-hint>
+        <mat-hint align="end">{{name.value.length}} / 256</mat-hint>
+        <mat-error *ngIf="nameFormControl.hasError('required')">
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <p>
+        <label>Gender: </label>
+        <mat-radio-group required>
+          <mat-radio-button class="gender-radio-button" *ngFor="let gender of genders" [value]="gender.id">
+            {{gender.sex}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </p>
+      <mat-form-field [floatLabel]="auto">
+        <input matInput [min]="minDateOfBirth" [max]="maxDateOfBirth" [matDatepicker]="dateOfBirthPicker" placeholder="Date of Birth"
+          required #dateOfBirth>
+        <mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
+        <mat-datepicker #dateOfBirthPicker></mat-datepicker>
+      </mat-form-field>
+      <div class="example-button-row">
+        <button mat-raised-button *ngIf="!formSubmittedIndicator" id="submit" type="submit">Save</button>
+        <button mat-raised-button id="reset" (click)="createTeamForm.reset()">Reset</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
 <div class="results-container mat-elevation-z8">
   <div class="results-loading-shade" *ngIf="isLoading">
-    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <mat-spinner></mat-spinner>
   </div>
 
-  <div class="results-table-container">
+  <div class="results-table-container" *ngIf="!isLoading">
     <mat-form-field>
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
 
-    <!-- <div class="mat-elevation-z8"> -->
     <table mat-table [dataSource]="dataSource" matSort>
 
       <ng-container matColumnDef="name">
@@ -72,6 +78,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="25"></mat-paginator>
   </div>
 </div>

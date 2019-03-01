@@ -2,6 +2,7 @@
 .runners-container {
   position: relative;
   min-height: 200px;
+  text-align: center;
 }
 
 .runners-table-container {
@@ -33,7 +34,7 @@ td, th {
   z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center;  
 }
 
 /* Column Widths */
@@ -43,4 +44,8 @@ td, th {
 
 .mat-radio-button ~ .mat-radio-button {
   margin-left: 16px;
+}
+
+.mat-card {
+  margin-bottom: 20px;
 }
