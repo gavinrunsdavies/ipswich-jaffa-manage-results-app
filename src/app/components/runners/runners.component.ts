@@ -20,9 +20,6 @@ export class RunnersComponent implements OnInit {
   runners: Runner[];
   genders: Gender[];
   newRunner: Runner = new Runner();
-  nameFormControl = new FormControl('', [
-    Validators.required
-  ]);
   minDateOfBirth: Date;
   maxDateOfBirth: Date;
 

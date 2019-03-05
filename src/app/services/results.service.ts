@@ -231,7 +231,13 @@ export class ResultsService {
 
   saveRunner(runner: Runner): Observable<Runner> {
     const url = `${this.baseUrl}/runners`;
-    return this.http.post<Runner>(url, runner, this.httpOptions)
+    const request = {
+      name : runner.name,
+      sexId : runner.sexId,
+      dateOfBirth : runner.dateOfBirth.toISOString().slice(0, 10)
+    };
+
+    return this.http.post<Runner>(url, request, this.httpOptions)
     .pipe(
       tap((r: Runner) => this.log(`added race ${JSON.stringify(r)}`)),
       catchError(this.handleError<Runner>('saveRunner'))

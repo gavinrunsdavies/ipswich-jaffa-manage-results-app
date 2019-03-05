@@ -49,3 +49,8 @@ td, th {
 .mat-card {
   margin-bottom: 20px;
 }
+
+.new-runner-button-row {
+  margin-top: 10px;
+  text-align: right;
+}

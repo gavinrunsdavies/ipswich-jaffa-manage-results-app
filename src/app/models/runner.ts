@@ -1,7 +1,7 @@
 export class  Runner {
     id: number;
     name: string;
-    dateOfBirth: string;
+    dateOfBirth: Date;
     sex: string;
     sexId: number;
 }
