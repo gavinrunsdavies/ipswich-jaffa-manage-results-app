@@ -18,6 +18,7 @@ import { Country } from '../models/country';
 import { RaceArea } from '../models/race-area';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
+import { IResponse } from '../models/iresponse';
 
 @Injectable()
 export class ResultsService {
@@ -184,12 +185,12 @@ export class ResultsService {
     );
   }
 
-  deleteRunner(runnerId: number): Observable<Runner> {
+  deleteRunner(runnerId: number): Observable<IResponse> {
     const url = `${this.baseUrl}/runners/${runnerId}`;
 
-    return this.http.delete<Runner>(url, this.httpOptions).pipe(
+    return this.http.delete<IResponse>(url, this.httpOptions).pipe(
       tap(_ => this.log(`deleted runner id=${runnerId}`)),
-      catchError(this.handleError<Runner>('deleteRunner'))
+      catchError(err => of({success: err.status !== 200, errorMessage: err.message} as IResponse))
     );
   }
 
@@ -239,7 +240,7 @@ export class ResultsService {
 
     return this.http.post<Runner>(url, request, this.httpOptions)
     .pipe(
-      tap((r: Runner) => this.log(`added race ${JSON.stringify(r)}`)),
+      tap((r: Runner) => this.log(`added runner ${JSON.stringify(r)}`)),
       catchError(this.handleError<Runner>('saveRunner'))
     );
   }
@@ -354,7 +355,6 @@ export class ResultsService {
 
   /**
    * Handle Http operation that failed.
-   * Let the app continue.
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
@@ -365,8 +365,27 @@ export class ResultsService {
 
       this.log(`${operation} failed: ${error.message}`);
 
+      // TODO return failure.
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+    /**
+   * Handle Http operation that failed.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  private logError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+
+      console.error(error); // log to console instead
+
+      this.log(`${operation} failed: ${error.message}`);
+
+      // TODO return failure.
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    }
   }
 }

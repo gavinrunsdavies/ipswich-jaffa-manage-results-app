@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { MatPaginator, MatSort, MatTableDataSource, MatSnackBar, MatDialog } from '@angular/material';
 import { Runner } from 'src/app/models/runner';
 import { Gender } from 'src/app/models/gender';
@@ -71,26 +70,33 @@ export class RunnersComponent implements OnInit {
     }
   }
 
-  delete(runnerId: number) {
-    console.log(`delete(${runnerId}) called`);
-    this.resultsService.deleteRunner(runnerId)
-      .subscribe((runner: Runner) => {
-        this.deleteRowDataTable(runnerId);
-        this.snackBar.open(`Runner ${runner.name} successfully deleted.`, null, {
-          duration: 1000
-        });
-      });
+  delete(runner: Runner) {
+    console.log(`delete(${runner.id}) called`);
+    this.resultsService.deleteRunner(runner.id)
+      .subscribe(
+        (runnerId: number) => {
+          this.deleteRowDataTable(runnerId);
+          this.snackBar.open(`Runner ${runner.name} successfully deleted.`, null, {
+            duration: 5000
+          });
+        },
+        error => {
+          this.notificationService.error(`Failed to delete runner ${runner.name} from database. Error ${error}`);
+          this.formSubmittedIndicator = false;
+        }
+      );
   }
 
   edit(runner: Runner) {
     // TODO get runner
     const dialogRef = this.dialog.open(RunnerEditorComponent, {
       width: '550px',
-      data: { runner }});
+      data: { runner }
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-  });
+    });
   }
 
   addRunner() {
@@ -100,15 +106,15 @@ export class RunnersComponent implements OnInit {
       this.formSubmittedIndicator = true;
       this.resultsService.saveRunner(this.newRunner)
         .subscribe(
-        runner => {
-          this.notificationService.success(`Runner ${runner.name} saved to database`);
-          // TODO add to table
-          this.formSubmittedIndicator = false;
-        },
-        error => {
-          this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${error}`);
-          this.formSubmittedIndicator = false;
-        });
+          runner => {
+            this.notificationService.success(`Runner ${runner.name} saved to database`);
+            // TODO add to table
+            this.formSubmittedIndicator = false;
+          },
+          error => {
+            this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${error}`);
+            this.formSubmittedIndicator = false;
+          });
     } catch (e) {
       this.formSubmittedIndicator = false;
       this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${e}`);
