@@ -74,8 +74,8 @@ export class RunnersComponent implements OnInit {
     console.log(`delete(${runner.id}) called`);
     this.resultsService.deleteRunner(runner.id)
       .subscribe(
-        (runnerId: number) => {
-          this.deleteRowDataTable(runnerId);
+        (success: boolean) => {
+          this.deleteRowDataTable(runner.id);
           this.snackBar.open(`Runner ${runner.name} successfully deleted.`, null, {
             duration: 5000
           });

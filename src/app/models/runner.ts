@@ -1,11 +1,7 @@
-import { IResponse } from './iresponse';
-
-export class Runner implements IResponse {
+export class Runner  {
     id: number;
     name: string;
     dateOfBirth: Date;
     sex: string;
     sexId: number;
-    success: boolean;
-    errorMessage: string;
 }

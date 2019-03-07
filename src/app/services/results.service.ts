@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { Observable ,  of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, tap, retryWhen } from 'rxjs/operators';
 
 import { Event } from '../models/event';
 import { Race } from '../models/race';
@@ -18,7 +18,7 @@ import { Country } from '../models/country';
 import { RaceArea } from '../models/race-area';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
-import { IResponse } from '../models/iresponse';
+import { genericRetryStrategy } from './rxjs-utils';
 
 @Injectable()
 export class ResultsService {
@@ -74,11 +74,11 @@ export class ResultsService {
     const url = `${this.baseUrl}/runners`;
     return this.http.get<Runner[]>(url)
       .pipe(
-      //   .map(response => {
-      //     const array = JSON.parse(response.json()) as any[];
-      //     const details = array.map(data => new Runner(data));
-      //     return details;
-      // })
+        //   .map(response => {
+        //     const array = JSON.parse(response.json()) as any[];
+        //     const details = array.map(data => new Runner(data));
+        //     return details;
+        // })
         // map((runners: Runner[]) => {}), TODO
         tap((runners: Runner[]) => this.log(`fetched runners ${JSON.stringify(runners)}`)),
         catchError(this.handleError<Runner[]>('getRunners'))
@@ -133,28 +133,28 @@ export class ResultsService {
   getCountries(): Observable<Country> {
     const url = `../assets/countries.json`;
     return this.http.get<Country>(url)
-    .pipe(
-      tap((race: Race) => this.log(`fetched countries from file ${url}`)),
-      catchError(this.handleError<Race>('getCountries'))
-    );
+      .pipe(
+        tap((race: Race) => this.log(`fetched countries from file ${url}`)),
+        catchError(this.handleError<Race>('getCountries'))
+      );
   }
 
   getEnglishCounties(): Observable<County> {
     const url = `../assets/english-counties.json`;
     return this.http.get<County>(url)
-    .pipe(
-      tap((race: Race) => this.log(`fetched counties from file ${url}`)),
-      catchError(this.handleError<Race>('getEnglishCounties'))
-    );
+      .pipe(
+        tap((race: Race) => this.log(`fetched counties from file ${url}`)),
+        catchError(this.handleError<Race>('getEnglishCounties'))
+      );
   }
 
   getRaceAreas(): Observable<RaceArea> {
     const url = `../assets\areas.json`;
     return this.http.get<Country>(url)
-    .pipe(
-      tap((race: Race) => this.log(`fetched area from file ${url}`)),
-      catchError(this.handleError<Race>('getRaceAreas'))
-    );
+      .pipe(
+        tap((race: Race) => this.log(`fetched area from file ${url}`)),
+        catchError(this.handleError<Race>('getRaceAreas'))
+      );
   }
 
   getResults(eventId?: number, fromDate?: string, toDate?: string, limit?: number): Observable<Result> {
@@ -185,12 +185,15 @@ export class ResultsService {
     );
   }
 
-  deleteRunner(runnerId: number): Observable<IResponse> {
+  deleteRunner(runnerId: number): Observable<boolean> {
     const url = `${this.baseUrl}/runners/${runnerId}`;
 
-    return this.http.delete<IResponse>(url, this.httpOptions).pipe(
+    return this.http.delete<boolean>(url, this.httpOptions).pipe(
       tap(_ => this.log(`deleted runner id=${runnerId}`)),
-      catchError(err => of({success: err.status !== 200, errorMessage: err.message} as IResponse))
+      retryWhen(genericRetryStrategy({
+        message: `Error deleting runner id=${runnerId}.`
+      })),
+      catchError(error => of(error))
     );
   }
 
@@ -215,70 +218,70 @@ export class ResultsService {
   saveEvent(event: Event): Observable<Event> {
     const url = `${this.baseUrl}/events`;
     return this.http.post<Event>(url, event, this.httpOptions)
-    .pipe(
-      tap((e: Event) => this.log(`added event ${JSON.stringify(e)}`)),
-      catchError(this.handleError<Event>('saveEvent'))
-    );
+      .pipe(
+        tap((e: Event) => this.log(`added event ${JSON.stringify(e)}`)),
+        catchError(this.handleError<Event>('saveEvent'))
+      );
   }
 
   saveRace(race: Race): Observable<Race> {
     const url = `${this.baseUrl}/races`;
     return this.http.post<Race>(url, race, this.httpOptions)
-    .pipe(
-      tap((r: Race) => this.log(`added race ${JSON.stringify(r)}`)),
-      catchError(this.handleError<Race>('saveRace'))
-    );
+      .pipe(
+        tap((r: Race) => this.log(`added race ${JSON.stringify(r)}`)),
+        catchError(this.handleError<Race>('saveRace'))
+      );
   }
 
   saveRunner(runner: Runner): Observable<Runner> {
     const url = `${this.baseUrl}/runners`;
     const request = {
-      name : runner.name,
-      sexId : runner.sexId,
-      dateOfBirth : runner.dateOfBirth.toISOString().slice(0, 10)
+      name: runner.name,
+      sexId: runner.sexId,
+      dateOfBirth: runner.dateOfBirth.toISOString().slice(0, 10)
     };
 
     return this.http.post<Runner>(url, request, this.httpOptions)
-    .pipe(
-      tap((r: Runner) => this.log(`added runner ${JSON.stringify(r)}`)),
-      catchError(this.handleError<Runner>('saveRunner'))
-    );
+      .pipe(
+        tap((r: Runner) => this.log(`added runner ${JSON.stringify(r)}`)),
+        catchError(this.handleError<Runner>('saveRunner'))
+      );
   }
 
   saveResult(result: Result): Observable<Result> {
     const url = `${this.baseUrl}/results`;
     return this.http.post<Result>(url, result, this.httpOptions)
-    .pipe(
-      tap((r: Result) => this.log(`added result ${JSON.stringify(r)}`)),
-      catchError(this.handleError<Result>('saveResult'))
-    );
+      .pipe(
+        tap((r: Result) => this.log(`added result ${JSON.stringify(r)}`)),
+        catchError(this.handleError<Result>('saveResult'))
+      );
   }
 
   saveMeeting(meeting: Meeting): Observable<Meeting> {
     const url = `${this.baseUrl}/events/${meeting.eventId}/meetings`;
     return this.http.post<Meeting>(url, meeting, this.httpOptions)
-    .pipe(
-      tap((meet: Meeting) => this.log(`added meeting ${JSON.stringify(meet)}`)),
-      catchError(this.handleError<Meeting>('saveMeeting'))
-    );
+      .pipe(
+        tap((meet: Meeting) => this.log(`added meeting ${JSON.stringify(meet)}`)),
+        catchError(this.handleError<Meeting>('saveMeeting'))
+      );
   }
 
   saveRunnerOfTheMonth(winners: RunnerOfTheMonth): Observable<RunnerOfTheMonth> {
     const url = `${this.baseUrl}/runnerofthemonth`;
     return this.http.post<RunnerOfTheMonth>(url, winners, this.httpOptions)
-    .pipe(
-      tap((a: RunnerOfTheMonth) => this.log(`added runner of the month winners ${JSON.stringify(a)}`)),
-      catchError(this.handleError<RunnerOfTheMonth>('saveRunnerOfTheMonth'))
-    );
+      .pipe(
+        tap((a: RunnerOfTheMonth) => this.log(`added runner of the month winners ${JSON.stringify(a)}`)),
+        catchError(this.handleError<RunnerOfTheMonth>('saveRunnerOfTheMonth'))
+      );
   }
 
   sendRunnerOfTheMonthVotesEmail(request) {
     const url = `${this.baseV3Url}/runnerofthemonth/vote/email`;
     return this.http.post(url, request, this.httpOptions)
-    .pipe(
-      tap((_ => this.log(`send runner of the month voting email ${JSON.stringify(request)}`)),
-      catchError(this.handleError('sendRunnerOfTheMonthVotesEmail'))
-    ));
+      .pipe(
+        tap((_ => this.log(`send runner of the month voting email ${JSON.stringify(request)}`)),
+          catchError(this.handleError('sendRunnerOfTheMonthVotesEmail'))
+        ));
   }
 
   updateEvent(eventId: number, field: string, value: string): Observable<any> {
@@ -339,7 +342,7 @@ export class ResultsService {
   updateRunnerOfTheMonth(runnerOfTheMonthId: number, value: string): Observable<any> {
     const url = `${this.baseV3Url}/runnerofthemonth/winners/${runnerOfTheMonthId}`;
     return this.http.put(url, {
-      field : 'runnerId',
+      field: 'runnerId',
       value
     }, this.httpOptions).pipe(
       tap(_ => this.log(`updated runner of the month: id=${runnerOfTheMonthId}, value=${value}`)),
@@ -369,23 +372,5 @@ export class ResultsService {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-
-    /**
-   * Handle Http operation that failed.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private logError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      console.error(error); // log to console instead
-
-      this.log(`${operation} failed: ${error.message}`);
-
-      // TODO return failure.
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    }
   }
 }
