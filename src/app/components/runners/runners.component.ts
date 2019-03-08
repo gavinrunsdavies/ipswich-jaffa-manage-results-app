@@ -75,12 +75,15 @@ export class RunnersComponent implements OnInit {
     this.resultsService.deleteRunner(runner.id)
       .subscribe(
         (success: boolean) => {
+          const message = `Runner ${runner.name} successfully deleted.`;
+          console.log(message);
           this.deleteRowDataTable(runner.id);
-          this.snackBar.open(`Runner ${runner.name} successfully deleted.`, null, {
+          this.snackBar.open(message, null, {
             duration: 5000
           });
         },
         error => {
+          console.log(`Failed to delete runner ${runner.name} from database. Error ${error}`);
           this.notificationService.error(`Failed to delete runner ${runner.name} from database. Error ${error}`);
           this.formSubmittedIndicator = false;
         }

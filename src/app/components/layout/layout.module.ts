@@ -13,6 +13,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopNavComponent } from '../topnav/topnav.component';
 import { LayoutRoutingModule } from './layout-routing.module';
 import { LayoutComponent } from './layout.component';
+import { NotificationsComponent } from '../notifications/notifications.component';
 
 @NgModule({
     imports: [
@@ -26,6 +27,6 @@ import { LayoutComponent } from './layout.component';
         MatMenuModule,
         MatListModule
     ],
-    declarations: [LayoutComponent, TopNavComponent, SidebarComponent]
+    declarations: [LayoutComponent, TopNavComponent, SidebarComponent, NotificationsComponent]
 })
 export class LayoutModule {}

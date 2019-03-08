@@ -192,8 +192,7 @@ export class ResultsService {
       tap(_ => this.log(`deleted runner id=${runnerId}`)),
       retryWhen(genericRetryStrategy({
         message: `Error deleting runner id=${runnerId}.`
-      })),
-      catchError(error => of(error))
+      }))
     );
   }
 

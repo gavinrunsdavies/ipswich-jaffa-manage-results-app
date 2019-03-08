@@ -1,5 +1,14 @@
 <app-topnav></app-topnav>
 <app-sidebar></app-sidebar>
-<div class="main-container">
-    <router-outlet></router-outlet>
-</div>
+        <!-- <div class="main-container"> -->
+                <mat-sidenav-container class="main-container">
+                        <mat-sidenav-content>
+                                <router-outlet></router-outlet>                
+                        </mat-sidenav-content>
+                        <mat-sidenav #sidenav mode="side" opened position="end">
+                                <app-notifications></app-notifications>
+                            </mat-sidenav>
+                    </mat-sidenav-container>
+            
+        <!-- </div> -->
+
