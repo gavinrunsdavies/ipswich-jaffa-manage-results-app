@@ -39,6 +39,10 @@ const routes: Routes = [
             {
                 path: 'meetings',
                 loadChildren: '../meetings/meetings.module#MeetingsModule'
+            },
+            {
+                path: 'logging',
+                loadChildren: '../notifications/notifications.module#NotificationsModule'
             }
         ]
     }

@@ -1,14 +1,11 @@
 <app-topnav></app-topnav>
 <app-sidebar></app-sidebar>
-        <!-- <div class="main-container"> -->
-                <mat-sidenav-container class="main-container">
-                        <mat-sidenav-content>
-                                <router-outlet></router-outlet>                
-                        </mat-sidenav-content>
-                        <mat-sidenav #sidenav mode="side" opened position="end">
-                                <app-notifications></app-notifications>
-                            </mat-sidenav>
-                    </mat-sidenav-container>
-            
-        <!-- </div> -->
-
+<mat-sidenav-container class="main-container">
+        <mat-sidenav-content>
+                <router-outlet></router-outlet>
+        </mat-sidenav-content>
+        <!-- <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
+                position="end">
+                <app-notifications></app-notifications>
+        </mat-sidenav> -->
+</mat-sidenav-container>

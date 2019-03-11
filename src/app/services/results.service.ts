@@ -305,13 +305,10 @@ export class ResultsService {
     );
   }
 
-  updateRunner(runnerId: number, field: string, value: string): Observable<any> {
-    const url = `${this.baseUrl}/runners/${runnerId}`;
-    return this.http.put(url, {
-      field,
-      value
-    }, this.httpOptions).pipe(
-      tap(_ => this.log(`updated runner: id=${runnerId}, field=${field}, value=${value}`)),
+  updateRunner(runner: Runner): Observable<any> {
+    const url = `${this.baseUrl}/runners/${runner.id}`;
+    return this.http.put(url, runner, this.httpOptions).pipe(
+      tap(_ => this.log(`updated runner: ${JSON.stringify(runner)}`)),
       catchError(this.handleError<any>('updateRunner'))
     );
   }
