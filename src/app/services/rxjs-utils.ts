@@ -5,7 +5,7 @@ export const genericRetryStrategy = (
   {
     maxRetryAttempts = 3,
     scalingDuration = 200,
-    excludedStatusCodes = [400, 401, 404, 40],
+    excludedStatusCodes = [400, 401, 404, 409],
     message = ''
   }: {
     maxRetryAttempts?: number;

@@ -14,15 +14,18 @@
         <mat-radio-button class="gender-radio-button" *ngFor="let gender of genders" [value]="gender.id">
           {{gender.sex}}
         </mat-radio-button>
-      </mat-radio-group>
+      </mat-radio-group>      
     </p>
+    <mat-hint align="start"><small>Gender can not be changed. Contact support for help.</small></mat-hint>
+    <br><br>
     <mat-form-field [floatLabel]="auto">
       <input matInput [min]="minDateOfBirth" [max]="maxDateOfBirth" [matDatepicker]="dateOfBirthPicker" placeholder="Date of Birth"
         required #dateOfBirth [(ngModel)]="runner.dateOfBirth"name="dateOfBirth" disabled>
-      <mat-hint align="start">Minimum age is 8 years old.</mat-hint>
+      <mat-hint align="start">Minimum age is 8 years old.</mat-hint>      
       <mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
       <mat-datepicker #dateOfBirthPicker></mat-datepicker>
     </mat-form-field>
+    <mat-hint align="start"><small>Date of birth can not be changed. Contact support for help.</small></mat-hint>
   </form>
 </div>
 <div mat-dialog-actions>  
