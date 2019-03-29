@@ -1,11 +1,31 @@
-<app-topnav></app-topnav>
-<app-sidebar></app-sidebar>
-<mat-sidenav-container class="main-container">
-        <mat-sidenav-content>
-                <router-outlet></router-outlet>
-        </mat-sidenav-content>
-        <!-- <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches"
-                position="end">
-                <app-notifications></app-notifications>
-        </mat-sidenav> -->
-</mat-sidenav-container>
+<div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
+        <mat-toolbar class="main-toolbar">
+                <button mat-icon-button (click)="snav.toggle()">
+                        <mat-icon>menu</mat-icon>
+                </button>
+                <h1 class="main-app-name">{{title}}</h1>
+                <span class="nav-spacer"></span>
+
+                Hello Bob
+                <button mat-icon-button (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                </button>
+                <button mat-icon-button (click)="logging.toggle()">
+                        <mat-icon>menu</mat-icon>
+                </button>
+        </mat-toolbar>
+        <mat-sidenav-container class="main-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+                <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
+                        [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
+                        <app-sidebar></app-sidebar>
+                </mat-sidenav>
+
+                <mat-sidenav-content>
+                        <router-outlet></router-outlet>
+                </mat-sidenav-content>
+                <mat-sidenav #logging [mode]="mobileQuery.matches ? 'over' : 'side'"
+                        [fixedInViewport]="mobileQuery.matches" fixedTopGap="56" position="end">
+                        logging window goes here
+                </mat-sidenav>
+        </mat-sidenav-container>
+</div>

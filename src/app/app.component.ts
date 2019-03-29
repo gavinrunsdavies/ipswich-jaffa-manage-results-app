@@ -9,11 +9,11 @@ import { NotificationService } from './services/notification.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   isLoggedIn = false;
-  title = 'Ipswich JAFFA Manage Results';
+  
   displayName = '';
 
   userStatusSubscription: Subscription;
