@@ -84,7 +84,7 @@ export class RunnersComponent implements OnInit {
         },
         error => {
           console.log(`Failed to delete runner ${runner.name} from database. Error ${error}`);
-          this.notificationService.error(`Failed to delete runner ${runner.name} from database. Error ${error}`);
+          this.notificationService.error(`Delete Failed`, `Failed to delete runner ${runner.name} from database. Error ${error}`);
           this.formSubmittedIndicator = false;
         }
       );
@@ -110,17 +110,17 @@ export class RunnersComponent implements OnInit {
       this.resultsService.saveRunner(this.newRunner)
         .subscribe(
           runner => {
-            this.notificationService.success(`Runner ${runner.name} saved to database`);
+            this.notificationService.info(``, `Runner ${runner.name} saved to database`);
             // TODO add to table
             this.formSubmittedIndicator = false;
           },
           error => {
-            this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${error}`);
+            this.notificationService.error(`Save Failed`, `Failed to save runner ${this.newRunner.name} saved to database. Error ${error}`);
             this.formSubmittedIndicator = false;
           });
     } catch (e) {
       this.formSubmittedIndicator = false;
-      this.notificationService.error(`Failed to save runner ${this.newRunner.name} saved to database. Error ${e}`);
+      this.notificationService.error(`Save Failed`, `Failed to save runner ${this.newRunner.name} saved to database. Error ${e}`);
       console.log('Error: ', e);
     }
   }

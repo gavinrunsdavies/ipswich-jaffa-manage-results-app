@@ -15,7 +15,7 @@
                 </button>
         </mat-toolbar>
         <mat-sidenav-container class="main-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-                <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
+                <mat-sidenav class="main-sidenav-navigation" #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
                         [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
                         <app-sidebar></app-sidebar>
                 </mat-sidenav>
@@ -23,9 +23,9 @@
                 <mat-sidenav-content>
                         <router-outlet></router-outlet>
                 </mat-sidenav-content>
-                <mat-sidenav #logging [mode]="mobileQuery.matches ? 'over' : 'side'"
+                <mat-sidenav class="main-sidenav-notifications" #logging [mode]="mobileQuery.matches ? 'over' : 'side'"
                         [fixedInViewport]="mobileQuery.matches" fixedTopGap="56" position="end">
-                        logging window goes here
+                       <app-notifications></app-notifications>
                 </mat-sidenav>
         </mat-sidenav-container>
 </div>

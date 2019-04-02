@@ -1,41 +1,30 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
-import { Observable ,  Subject } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class NotificationService {
 
-  private subject = new Subject<any>();
-  private keepAfterNavigationChange = false;
+    private messages = new Subject<any>();
 
-  constructor(private router: Router) {
-      // clear alert message on route change
-      router.events.subscribe(event => {
-          if (event instanceof NavigationStart) {
-              if (this.keepAfterNavigationChange) {
-                  // only keep for a single location change
-                  this.keepAfterNavigationChange = false;
-              } else {
-                  // clear alert
-                  this.subject.next();
-              }
-          }
-      });
-  }
+    constructor(private router: Router) {
+    }
 
-  success(message: string, keepAfterNavigationChange = false, timeout: number = 5) {
-      this.keepAfterNavigationChange = keepAfterNavigationChange;
-      this.subject.next({ type: 'success', text: message, timeout });
-  }
+    info(title: string, message: string) {
+        this.messages.next({ type: 'info', text: message, title });
+    }
 
-  error(message: string, keepAfterNavigationChange = false, timeout: number = 5) {
-      this.keepAfterNavigationChange = keepAfterNavigationChange;
-      this.subject.next({ type: 'error', text: message, timeout });
-  }
+    warning(title: string, message: string) {
+        this.messages.next({ type: 'warning', text: message, title });
+    }
 
-  getMessage(): Observable<any> {
-      return this.subject.asObservable();
-  }
+    error(title: string, message: string) {
+        this.messages.next({ type: 'error', text: message, title });
+    }
+
+    getMessages(): Observable<any> {
+        return this.messages.asObservable();
+    }
 }

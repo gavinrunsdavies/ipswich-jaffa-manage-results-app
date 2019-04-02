@@ -13,7 +13,6 @@ import { NotificationService } from './services/notification.service';
 })
 export class AppComponent {
   isLoggedIn = false;
-  
   displayName = '';
 
   userStatusSubscription: Subscription;

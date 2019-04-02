@@ -1,6 +1,12 @@
 <p>
-  notifications works!
+  notifications works! notifications works! notifications works! notifications works!
 </p>
-<div class="example-events">
-  <div *ngFor="let e of notifications">{{e}}</div>
-</div>
+<mat-list>
+  <mat-list-item *ngFor="let message of messages">
+    <mat-icon matListIcon>{{message.type}}</mat-icon>
+    <h3 matLine> {{message.title}} </h3>
+    <p matLine>
+      <span> {{message.text}} </span>
+    </p>
+  </mat-list-item>
+</mat-list>
