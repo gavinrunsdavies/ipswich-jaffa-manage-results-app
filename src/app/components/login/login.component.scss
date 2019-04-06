@@ -1,0 +1,42 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .login-card {
+    width: 60%;
+    max-width: 400px;
+    background: #fff;
+    z-index: 1;
+    margin: 0 auto;
+    .mat-form-field {
+      width: 100%;
+    }
+  }
+
+  &:after {
+    content: "";
+    background: rgb(0, 0, 0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 50%;
+    right: 0;
+  }
+  &:before {
+    content: "";
+    background: #ee881b;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+/* TODO Mobile */
+
+/*.login-container>* {
+    width: 100%;
+}
+*/

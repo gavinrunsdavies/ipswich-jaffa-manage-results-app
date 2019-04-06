@@ -11,7 +11,7 @@ export class LayoutComponent implements OnDestroy {
 
   private mobileQueryListener: () => void;
 
-  //title = 'Ipswich JAFFA Manage Results';
+  // title = 'Ipswich JAFFA Manage Results';
 
   constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 600px)');

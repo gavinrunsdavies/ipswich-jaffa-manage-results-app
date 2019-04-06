@@ -34,6 +34,6 @@ export class AppComponent {
   logout(): void {
     const message = `User ${this.currentUser.displayName} successfully logged out`;
     this.authenticationService.logout();
-    this.notificationService.success(message);
+    this.notificationService.info(`User Logged out`, message);
   }
 }

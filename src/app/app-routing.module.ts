@@ -7,7 +7,7 @@ const routes: Routes = [
   {
       path: '',
       loadChildren: './components/layout/layout.module#LayoutModule',
-   //   canActivate: [EnsureAuthenticatedService]
+      canActivate: [EnsureAuthenticatedService]
   },
   {
       path: 'login',

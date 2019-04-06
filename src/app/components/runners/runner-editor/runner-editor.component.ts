@@ -58,17 +58,17 @@ export class RunnerEditorComponent implements OnInit {
       this.resultsService.updateRunner(this.runner)
         .subscribe(
           runner => {
-            this.notificationService.success(`Runner ${runner.name} updated to database`);
+            this.notificationService.info(``, `Runner ${runner.name} updated to database`);
             this.formSubmittedIndicator = false;
             this.dialogRef.close();
           },
           error => {
-            this.notificationService.error(`Failed to update runner ${this.runner.name} to database. Error ${error}`);
+            this.notificationService.error(`Update Failed`, `Failed to update runner ${this.runner.name} to database. Error ${error}`);
             this.formSubmittedIndicator = false;
           });
     } catch (e) {
       this.formSubmittedIndicator = false;
-      this.notificationService.error(`Failed to update runner ${this.runner.name} to database. Error ${e}`);
+      this.notificationService.error(`Update Failed`, `Failed to update runner ${this.runner.name} to database. Error ${e}`);
       console.log('Error: ', e);
     }
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NotificationService } from './../../services/notification.service';
+import { LogMessage } from 'src/app/models/log-message';
 
 @Component({
   selector: 'app-notifications',
@@ -8,16 +9,13 @@ import { NotificationService } from './../../services/notification.service';
 })
 export class NotificationsComponent implements OnInit {
 
-  message: any;
+  messages: LogMessage[] = [];
 
   constructor(public notificationService: NotificationService) { }
 
   ngOnInit() {
     this.notificationService.getMessages().subscribe(message => {
-      this.message = message;
-      const timeout = 5000;
-
-      setTimeout(() => this.message = null, timeout);
+      this.messages.unshift(message);
     });
   }
 }

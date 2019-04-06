@@ -20,7 +20,7 @@ export class AuthService {
     this.currentUserSubject = new Subject<User>();
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string, useLocalStorage: boolean) {
     const url = `${environment.baseUrl}/wp-json/jwt-auth/v1/token`;
     return this.http.post<any>(url, { username, password }, { headers: this.headers }).pipe(
       map(user => {
@@ -32,7 +32,12 @@ export class AuthService {
           currentUser.displayName = user.user_display_name;
           currentUser.email = user.user_email;
 
-          sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+          if (useLocalStorage) {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+          } else {
+            sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+          }
+
           this.currentUserSubject.next(currentUser);
         }
 
@@ -41,8 +46,9 @@ export class AuthService {
   }
 
   logout() {
-    // remove user from local storage to log user out and clear observable
+    // remove user from local/session storage to log user out and clear observable
     sessionStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUser');
     this.currentUserSubject.next();
 
     this.router.navigateByUrl('/');
@@ -55,10 +61,18 @@ export class AuthService {
   }
 
   ensureAuthenticated() {
-    const localStorageCurrentUser = sessionStorage.getItem('currentUser');
+    const localStorageCurrentUser = localStorage.getItem('currentUser');
+    const sessionStorageCurrentUser = sessionStorage.getItem('currentUser');
 
+    let currentUser = null;
     if (localStorageCurrentUser) {
-      const user = JSON.parse(localStorageCurrentUser);
+      currentUser = localStorageCurrentUser;
+    } else {
+      currentUser = sessionStorageCurrentUser;
+    }
+
+    if (currentUser) {
+      const user = JSON.parse(currentUser);
       const url = `${environment.baseUrl}/wp-json/jwt-auth/v1/token/Validate`;
       const headers: HttpHeaders = new HttpHeaders({
         'Content-Type': 'application/json',

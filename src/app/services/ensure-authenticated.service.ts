@@ -11,11 +11,11 @@ export class EnsureAuthenticatedService implements CanActivate {
   constructor(private router: Router,
               private authenticationService: AuthService) {}
   canActivate(): boolean {
-    if (sessionStorage.getItem('currentUser')) {
+    if (sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser')) {
       return true;
     } else {
       this.authenticationService.logout();
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl('/login');
       return false;
     }
   }
