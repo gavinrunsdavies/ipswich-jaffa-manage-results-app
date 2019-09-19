@@ -9,30 +9,32 @@ angular.module('ipswichJaffaResultsManagementApp')
 
         service.Login = function (username, password, callback) {
 
-			const url = myConfig.apiUrl + 'login';
+            //const url = 'http://test.ipswichjaffa.org.uk/wp-json/jwt-auth/v1/token';
+            const url = 'https://www.ipswichjaffa.org.uk/wp-json/jwt-auth/v1/token';
 	
-            return $http.post( url, { username: Base64.encode(username), password: Base64.encode(password) });
+            return $http.post( url, { username: username, password: password });
         };
  
-        service.SetCredentials = function (username, password, name) {
+        service.SetCredentials = function (username, password, name, token) {
             var authdata = Base64.encode(username + ':' + password);
  
             $rootScope.globals = {
                 currentUser: {
                     username: username,
                     authdata: authdata,
-					name: name
+                    name: name,
+                    token: token
                 }
             };
  
-            $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata; // jshint ignore:line
+            $http.defaults.headers.common['Authorization'] = 'Bearer ' + token; // jshint ignore:line
             $cookieStore.put('globals', $rootScope.globals);
         };
  
         service.ClearCredentials = function () {
             $rootScope.globals = {};
             $cookieStore.remove('globals');
-            $http.defaults.headers.common.Authorization = 'Basic ';
+            //$http.defaults.headers.common.Authorization = 'Basic ';
         };
  
         return service;

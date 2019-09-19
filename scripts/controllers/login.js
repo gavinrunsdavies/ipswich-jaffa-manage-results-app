@@ -14,7 +14,8 @@ angular.module('Authentication')
 				$scope.dataLoading = true;
 				AuthenticationService.Login($scope.username, $scope.password)
 				.then(function (response) {
-					AuthenticationService.SetCredentials($scope.username, $scope.password, response.data.data.display_name);
+					AuthenticationService.SetCredentials($scope.username, $scope.password, response.data.user_display_name, response.data.token);
+       
 					$location.path('/');
 					
 					// Set name in Body Controller

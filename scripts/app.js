@@ -15,131 +15,131 @@ angular.module('Results', []);
 
 var myApp = angular
 	.module('ipswichJaffaResultsManagementApp', [
-			'Authentication',
-			'Results',
-			'angularUtils.directives.dirPagination',
-			'xeditable',
-			'ngAnimate',
-			'ngCookies',
-			'ngResource',
-			'ngRoute',
-			'ui.bootstrap',
-			'cgBusy',
-			'dndLists'
-		])
+		'Authentication',
+		'Results',
+		'angularUtils.directives.dirPagination',
+		'xeditable',
+		'ngAnimate',
+		'ngCookies',
+		'ngResource',
+		'ngRoute',
+		'ui.bootstrap',
+		'cgBusy',
+		'dndLists'
+	])
 	.constant('myConfig', {
-		"apiUrl": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",		
-		"apiV3Url": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v3/",	
+		"apiUrl": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v2/",
+		"apiV3Url": "http://test.ipswichjaffa.org.uk/wp-json/ipswich-jaffa-api/v3/",
 	})
 	.config(function ($routeProvider) {
 		$routeProvider
-		.when('/login', {
-			controller : 'LoginController',
-			templateUrl : 'views/login.html'			
-		})
-		.when('/', {
-			templateUrl : 'views/main.html',
-			controller : 'MainCtrl'
-		})
-		.when('/events', {
-			templateUrl : 'views/events.html',
-			controller : 'EventCtrl',
-			resolve : {
-				events : ['dataFactory', function (dataFactory) {
+			.when('/login', {
+				controller: 'LoginController',
+				templateUrl: 'views/login.html'
+			})
+			.when('/', {
+				templateUrl: 'views/main.html',
+				controller: 'MainCtrl'
+			})
+			.when('/events', {
+				templateUrl: 'views/events.html',
+				controller: 'EventCtrl',
+				resolve: {
+					events: ['dataFactory', function (dataFactory) {
 						return dataFactory.getEvents();
 					}
-				]
-			}
-		})
-		.when('/races', {
-			templateUrl : 'views/races.html',
-			controller : 'RaceCtrl',
-			resolve : {
-				events : ['dataFactory', function (dataFactory) {
+					]
+				}
+			})
+			.when('/races', {
+				templateUrl: 'views/races.html',
+				controller: 'RaceCtrl',
+				resolve: {
+					events: ['dataFactory', function (dataFactory) {
 						return dataFactory.getEvents();
 					}
-				],
-				distances : ['dataFactory', function (dataFactory) {
+					],
+					distances: ['dataFactory', function (dataFactory) {
 						return dataFactory.getDistances();
 					}
-				],
-				coursetypes : ['dataFactory', function (dataFactory) {
+					],
+					coursetypes: ['dataFactory', function (dataFactory) {
 						return dataFactory.getCourseTypes();
 					}
-				],
-				countries : ['dataFactory', function (dataFactory) {
+					],
+					countries: ['dataFactory', function (dataFactory) {
 						return dataFactory.getCountries();
 					}
-				],
-				counties : ['dataFactory', function (dataFactory) {
+					],
+					counties: ['dataFactory', function (dataFactory) {
 						return dataFactory.getEnglishCounties();
 					}
-				],
-				areas : ['dataFactory', function (dataFactory) {
+					],
+					areas: ['dataFactory', function (dataFactory) {
 						return dataFactory.getRaceAreas();
 					}
-				]
-			}
-		})
-		.when('/meetings', {
-			templateUrl : 'views/meetings.html',
-			controller : 'MeetingCtrl',
-			resolve : {
-				events : ['dataFactory', function (dataFactory) {
+					]
+				}
+			})
+			.when('/meetings', {
+				templateUrl: 'views/meetings.html',
+				controller: 'MeetingCtrl',
+				resolve: {
+					events: ['dataFactory', function (dataFactory) {
 						return dataFactory.getEvents();
 					}
-				]
-			}
-		})
-		.when('/results', {
-			templateUrl : 'views/results.html',
-			controller : 'ResultCtrl',
-			resolve : {
-				results : ['dataFactory', function (dataFactory) {
+					]
+				}
+			})
+			.when('/results', {
+				templateUrl: 'views/results.html',
+				controller: 'ResultCtrl',
+				resolve: {
+					results: ['dataFactory', function (dataFactory) {
 						return dataFactory.getResults();
 					}
-				],
-				events : ['dataFactory', function (dataFactory) {
+					],
+					events: ['dataFactory', function (dataFactory) {
 						return dataFactory.getEvents();
 					}
-				],
-				runners : ['dataFactory', function (dataFactory) {
+					],
+					runners: ['dataFactory', function (dataFactory) {
 						return dataFactory.getRunners();
 					}
-				]
-			}
-		})
-		.when('/runners', {
-			templateUrl : 'views/runners.html',
-			controller : 'RunnerCtrl',
-			resolve : {
-				runners : ['dataFactory', function (dataFactory) {
+					]
+				}
+			})
+			.when('/runners', {
+				templateUrl: 'views/runners.html',
+				controller: 'RunnerCtrl',
+				resolve: {
+					runners: ['dataFactory', function (dataFactory) {
 						return dataFactory.getRunners();
 					}
-				],
-				genders : ['dataFactory', function (dataFactory) {
+					],
+					genders: ['dataFactory', function (dataFactory) {
 						return dataFactory.getGenders();
 					}
-				]
-			}
-		})
-		.when('/rotm', {
-			templateUrl : 'views/runner-of-the-month.html',
-			controller : 'RunnerOfTheMonthCtrl',
-			resolve : {
-				runners : ['dataFactory', function (dataFactory) {
+					]
+				}
+			})
+			.when('/rotm', {
+				templateUrl: 'views/runner-of-the-month.html',
+				controller: 'RunnerOfTheMonthCtrl',
+				resolve: {
+					runners: ['dataFactory', function (dataFactory) {
 						return dataFactory.getRunners();
 					}
-				],
-				winners : ['dataFactory', function (dataFactory) {
+					],
+					winners: ['dataFactory', function (dataFactory) {
 						return dataFactory.getRunnerOfTheMonthWinners();
 					}
-				]
-			}
-		})
-		.otherwise({
-			redirectTo : '/login'
-		});
+					]
+				}
+			})
+			.otherwise({
+				redirectTo: '/login'
+			});
 	});
 
 myApp.run(function (editableOptions) {
@@ -147,43 +147,43 @@ myApp.run(function (editableOptions) {
 });
 
 myApp.run(['$rootScope', '$location', '$cookieStore', '$http',
-		function ($rootScope, $location, $cookieStore, $http) {
-			// keep user logged in after page refresh
-			$rootScope.globals = $cookieStore.get('globals') || {};
-			if ($rootScope.globals.currentUser) {
-				$http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.currentUser.authdata; // jshint ignore:line
-			}
-
-			$rootScope.$on('$locationChangeStart', function (event, next, current) {
-				// redirect to login page if not logged in
-				if ($location.path() !== '/login' && !$rootScope.globals.currentUser) {
-					$location.path('/login');
-					//$rootScope.hideMenu = true;
-				}
-			});
+	function ($rootScope, $location, $cookieStore, $http) {
+		// keep user logged in after page refresh
+		$rootScope.globals = $cookieStore.get('globals') || {};
+		if ($rootScope.globals.currentUser) {
+			$http.defaults.headers.common['Authorization'] = 'Bearer ' + $rootScope.globals.currentUser.token; // jshint ignore:line
 		}
-	]);	
 
-myApp.run(['$rootScope',function($rootScope){
+		$rootScope.$on('$locationChangeStart', function (event, next, current) {
+			// redirect to login page if not logged in
+			if ($location.path() !== '/login' && !$rootScope.globals.currentUser) {
+				$location.path('/login');
+				//$rootScope.hideMenu = true;
+			}
+		});
+	}
+]);
 
-    $rootScope.stateIsLoading = false;
-    $rootScope.$on('$routeChangeStart', function() {
-        $rootScope.stateIsLoading = true;
-    });
-	
-    $rootScope.$on('$routeChangeSuccess', function() {
-        $rootScope.stateIsLoading = false;
-    });
-	
-    $rootScope.$on('$routeChangeError', function() {
-        //catch error
-    });
+myApp.run(['$rootScope', function ($rootScope) {
+
+	$rootScope.stateIsLoading = false;
+	$rootScope.$on('$routeChangeStart', function () {
+		$rootScope.stateIsLoading = true;
+	});
+
+	$rootScope.$on('$routeChangeSuccess', function () {
+		$rootScope.stateIsLoading = false;
+	});
+
+	$rootScope.$on('$routeChangeError', function () {
+		//catch error
+	});
 
 }]);
 
 myApp.controller('ModalDeleteInstanceCtrl', function ($scope, $modalInstance) {
 
-	$scope.delete  = function () {
+	$scope.delete = function () {
 		$modalInstance.close(true);
 	};
 
@@ -196,4 +196,3 @@ myApp.controller('ModalDeleteInstanceCtrl', function ($scope, $modalInstance) {
 //http://jasonwatmore.com/post/2014/05/26/AngularJS-Basic-HTTP-Authentication-Example.aspx
 //http://jasonwatmore.com/post/2015/03/10/AngularJS-User-Registration-and-Login-Example.aspx
 //https://github.com/colthreepv/angular-login-example
-//http://jameshill.io/articles/angular-third-party-injection-pattern/
