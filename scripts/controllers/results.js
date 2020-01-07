@@ -21,7 +21,6 @@ angular.module('ipswichJaffaResultsManagementApp')
 			$scope.resultPlaceHolderText;
 			$scope.runners = runners.data;
 			$scope.currentRunners = $filter('filter')($scope.runners, {
-							isCurrentMember : '1'
 						}, true);
 			$scope.results = results.data;
 			$scope.events = events.data;
