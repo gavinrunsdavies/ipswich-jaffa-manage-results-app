@@ -23,7 +23,7 @@
 					<div class="col-sm-4">
 						<div class="input-group">
 							<input class="form-control" close-text="Close" is-open="calendarStatus.opened"
-								ng-model="newRace.date" ng-required="true" type="text"
+								ng-model="newRace.date" ng-required="true" type="text" id="date"
 								uib-datepicker-popup="dd-MMMM-yyyy"/>
 							<span class="input-group-btn">
 								<button class="btn btn-default" ng-click="calendarStatus.opened = true"
@@ -216,8 +216,8 @@
                             </span>
                         </td>
 						<td>
-                              <a e-ng-options="d.id as d.text for d in distances"
-                                editable-select="race.distance" href="#"
+                              <a e-name="distanceId" e-ng-options="d.id as d.text for d in distances"
+                                editable-select="race.distanceId" href="#"
                                 onbeforesave="updateRace($data, 'distance_id', race.id)">
                                 {{ showDistance(race.distance) }}
                             </a>
